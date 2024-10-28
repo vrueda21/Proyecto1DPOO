@@ -10,6 +10,7 @@ public class Estudiante extends Usuario{
     protected LearningPath learningPathActual;
     protected List<LearningPath> listaLearningPathsCompletados;
     protected List<Actividad> listaActividadesCompletadas;
+    protected List<Actividad> listaActividadesPorCompletar;
 
     public Estudiante(String nombre, String contrasenia, String correo){
 
@@ -17,12 +18,10 @@ public class Estudiante extends Usuario{
         this.actividadActual=null;
         this.learningPathActual=null;
         this.listaActividadesCompletadas = new ArrayList<>();
+        this.listaLearningPathsCompletados = new ArrayList<>();
+        this.listaActividadesPorCompletar = null;
     }
 
-    public void prueba(){
-        Administrador administrador = Administrador.getAdmin(); //LLamar a administrador
-
-    }
     public Actividad getActividadActual() {
         return actividadActual;
     }
@@ -55,24 +54,61 @@ public class Estudiante extends Usuario{
 
         tarea.marcarCompletada(this);
         listaActividadesCompletadas.add(this.actividadActual);
+        listaActividadesPorCompletar.removeFirst();
         this.actividadActual=null;
+
+        if (listaActividadesPorCompletar.isEmpty()){
+            agregarLearningPathCompletado();
+        }
 
     }
 
-    public Actividad comenzarActividad(Actividad actividad) throws IllegalStateException{
+    public Actividad comenzarActividad() throws IllegalStateException{
+        
         if (actividadActual==null){
-            setActividadActual(actividad);
-            return actividadActual;
+            if (learningPathActual!=null){
+                if (!listaActividadesPorCompletar.isEmpty()){
+                setActividadActual(listaActividadesPorCompletar.getFirst());
+                return actividadActual;
+                }
+            else{
+                throw new IllegalStateException("No hay actividades que quedan por completar.");
+            }
+            }
+            else{
+                throw new IllegalStateException("No hay un Learning Path que se está siguiendo actualmente; escoja uno y vuelva a intentar.");
+            }
         }
 
         else{
             throw new IllegalStateException("No se puede comenzar una actividad nueva porque hay una en progreso.");
         }
-        
+    }
+    
+    
+    public void comenzarLearningPath(LearningPath learningPath){
+        if (learningPathActual==null){
+            setLearningPathActual(learningPath);
+            this.listaActividadesPorCompletar = new ArrayList<>();
+            listaActividadesPorCompletar.addAll(learningPath.getListaActividades());
+
+        }
+        else{
+            throw new IllegalStateException("No se puede comenzar un Learning Path cuando ya hay uno en curso.");
+        }
+
     }
 
-    public void agregarLearningPathCompletado(LearningPath learningPath){
+    public void agregarLearningPathCompletado(){
 
+        if (listaActividadesPorCompletar.isEmpty()){
+            listaLearningPathsCompletados.add(learningPathActual);
+            this.listaActividadesPorCompletar=null;
+            this.learningPathActual=null;
+        }
+        else{
+            throw new IllegalStateException("No se puede completar un Learning Path que aún tiene actividades por completar.");
+        }
 
     }
     
