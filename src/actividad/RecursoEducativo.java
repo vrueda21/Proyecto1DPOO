@@ -8,7 +8,7 @@ public class RecursoEducativo extends Actividad{
 
     public RecursoEducativo(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, String tipoRecurso, Obligatoria obligatoria){
 
-        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, status, obligatoria);
+        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, status, obligatoria, "recursoEducativo");
         this.tipoRecurso = tipoRecurso;
     }
 

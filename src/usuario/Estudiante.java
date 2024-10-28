@@ -50,7 +50,8 @@ public class Estudiante extends Usuario{
 		return plataforma.agregarEstudiante(estudiante);
 	}
 
-    public void marcarCompletada(Tarea tarea){
+
+    public void marcarTareaCompletada(Tarea tarea){
 
         tarea.marcarCompletada(this);
         listaActividadesCompletadas.add(this.actividadActual);

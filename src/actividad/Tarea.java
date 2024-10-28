@@ -11,7 +11,7 @@ public class Tarea extends Actividad{
 
     public Tarea(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, String submissionMethod, Obligatoria obligatoria){
 
-        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, status, obligatoria);
+        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, status, obligatoria, "tarea");
         this.submissionMethod="NO ENVIADA";
         this.completada=Status.Incompleto;
 
@@ -53,5 +53,10 @@ public class Tarea extends Actividad{
         }
 
     }
+
+    public Status getCompletada() {
+        return completada;
+    }
+    
 
 }
