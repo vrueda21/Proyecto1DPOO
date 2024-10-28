@@ -133,7 +133,7 @@ public class LearningPath {
 
     public void agregarActividad(Actividad actividad) {
         if (listaActividades.contains(actividad)) {
-            throw new IllegalArgumentException("La actividad ya está en la lista de actividade del Learning Path.");
+            throw new IllegalArgumentException("La actividad ya está en la lista de actividades del Learning Path.");
         } else {
             listaActividades.add(actividad);
             this.fechaModificacion=LocalDateTime.now();

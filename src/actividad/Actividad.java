@@ -1,4 +1,5 @@
 package actividad;
+
 import java.time.*;
 
 public abstract class Actividad {
@@ -103,5 +104,6 @@ public abstract class Actividad {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
+
 
 }
