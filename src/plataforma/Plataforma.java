@@ -34,10 +34,10 @@ public class Plataforma {
     public Administrador getAdministrador() {
         return administrador;
     }
-    public Map<String, Estudiante> getListaEstudiantes() {
+    public Map<String, Estudiante> getEstudiantes() {
         return estudiantes;
     }
-    
+
     public boolean agregarEstudiante(Estudiante estudiante){
 
         String correo = estudiante.getCorreo();
