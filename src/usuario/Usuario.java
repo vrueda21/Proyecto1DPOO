@@ -4,14 +4,14 @@ public abstract class Usuario {
 
     protected String nombre;
     protected String contrasenia;
-    protected String id;
+    protected String tipo;
     protected String correo;
 
-    public Usuario(String nombre, String contrasenia, String id, String correo){
+    public Usuario(String nombre, String contrasenia, String tipo, String correo){
 
         this.nombre = nombre;
         this.contrasenia = contrasenia;
-        this.id = id;
+        this.tipo = tipo;
         this.correo = correo;
     }
 
@@ -23,8 +23,8 @@ public abstract class Usuario {
         return contrasenia;
     }
 
-    public String getId() {
-        return id;
+    public String getTipo() {
+        return tipo;
     }
 
     public String getCorreo() {
@@ -39,8 +39,8 @@ public abstract class Usuario {
         this.contrasenia = contrasenia;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String tipo) {
+        this.tipo = tipo;
     }
 
     public void setCorreo(String correo) {

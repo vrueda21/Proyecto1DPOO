@@ -2,6 +2,6 @@ package actividad;
 
 public enum Status {
 
-    Completado, Incompleto
+    Completado, Incompleto, Exitosa, noExitosa, Enviada
 
 }

@@ -12,8 +12,10 @@ public abstract class Actividad {
     protected LocalDateTime fechaLimite;
     protected LocalDateTime fechaInicio;
     protected Status status;
+    protected Obligatoria obligatoria;
 
-    public Actividad(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status) throws IllegalArgumentException{
+
+    public Actividad(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria) throws IllegalArgumentException{
 
 
 
@@ -29,7 +31,8 @@ public abstract class Actividad {
         }
 
         this.fechaLimite=fechaLimite;
-        this.status=status;
+        this.status=Status.Incompleto;
+        this.obligatoria = obligatoria;
 
 
     }
@@ -81,6 +84,14 @@ public abstract class Actividad {
     }
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Obligatoria getObligatoria() {
+        return obligatoria;
+    }
+
+    public void setObligatoria(Obligatoria obligatoria) {
+        this.obligatoria = obligatoria;
     }
 
     
