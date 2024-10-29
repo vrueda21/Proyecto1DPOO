@@ -66,45 +66,31 @@ public abstract class Actividad {
     public String getDescripcion() {
         return descripcion;
     }
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+
     public Nivel getNivelDificultad() {
         return nivelDificultad;
     }
-    public void setNivelDificultad(Nivel nivelDificultad) {
-        this.nivelDificultad = nivelDificultad;
-    }
+
     public String getObjetivo() {
         return objetivo;
     }
-    public void setObjetivo(String objetivo) {
-        this.objetivo = objetivo;
-    }
+
     public int getDuracionEsperada() {
         return duracionEsperada;
     }
-    public void setDuracionEsperada(int duracionEsperada) {
-        this.duracionEsperada = duracionEsperada;
-    }
+
     public double getVersion() {
         return version;
     }
-    public void setVersion(double version) {
-        this.version = version;
-    }
+
     public LocalDateTime getFechaLimite() {
         return fechaLimite;
     }
-    public void setFechaLimite(LocalDateTime fechaLimite) {
-        this.fechaLimite = fechaLimite;
-    }
+
     public LocalDateTime getFechaInicio() {
         return fechaInicio;
     }
-    public void setFechaInicio(LocalDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
+
     public Status getStatus() {
         return status;
     }
@@ -116,16 +102,8 @@ public abstract class Actividad {
         return obligatoria;
     }
 
-    public void setObligatoria(Obligatoria obligatoria) {
-        this.obligatoria = obligatoria;
-    }
-
     public String getTipo() {
         return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public Profesor getCreador() {
@@ -210,7 +188,7 @@ public abstract class Actividad {
         }
     }
 
-    // Métodos de modificación de atributos clave
+    // Métodos de modificación de atributos clave (Setters con verificación de inscripciones en Learning Path)
     public void setDescripcion(String descripcion, LearningPath learningPath) {
         if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
             throw new UnsupportedOperationException("No se puede modificar la descripción si hay estudiantes inscritos en el Learning Path.");
@@ -237,6 +215,45 @@ public abstract class Actividad {
             throw new UnsupportedOperationException("No se puede modificar la duración esperada si hay estudiantes inscritos en el Learning Path.");
         }
         this.duracionEsperada = duracionEsperada;
+    }
+
+
+    public void setFechaLimite(LocalDateTime fechaLimite, LearningPath learningPath) {
+        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+            throw new UnsupportedOperationException("No se puede modificar la fecha límite si hay estudiantes inscritos en el Learning Path.");
+        }
+        if (fechaLimite.isBefore(this.fechaInicio)) {
+            throw new IllegalArgumentException("La nueva fecha límite no puede ser anterior a la fecha de inicio.");
+        }
+        this.fechaLimite = fechaLimite;
+    }
+
+    public void setVersion(double version, LearningPath learningPath) {
+        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+            throw new UnsupportedOperationException("No se puede modificar la versión si hay estudiantes inscritos en el Learning Path.");
+        }
+        this.version = version;
+    }
+
+    public void setObligatoria(Obligatoria obligatoria, LearningPath learningPath) {
+        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+            throw new UnsupportedOperationException("No se puede modificar si la actividad es obligatoria u opcional si hay estudiantes inscritos en el Learning Path.");
+        }
+        this.obligatoria = obligatoria;
+    }
+
+    public void setFechaInicio(LocalDateTime fechaInicio, LearningPath learningPath) {
+        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+            throw new UnsupportedOperationException("No se puede modificar la fecha de inicio si hay estudiantes inscritos en el Learning Path.");
+        }
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setTipo(String tipo, LearningPath learningPath) {
+        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+            throw new UnsupportedOperationException("No se puede modificar el tipo de la actividad si hay estudiantes inscritos en el Learning Path.");
+        }
+        this.tipo = tipo;
     }
 
 
