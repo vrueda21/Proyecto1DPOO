@@ -1,3 +1,7 @@
+
+// FALTA ASEGURAR LO DE QUE LOS PROFESORES NO PUEDEN MODIFICAR SI YA HAY ESTUDIANTE SINSCRITOS AL LEARNIGN PATH ASOCIADO AL LEARNING PATH DONDE ESTA LA ACTIVIDAD
+
+
 package actividad;
 
 import java.time.*;
@@ -51,8 +55,9 @@ public abstract class Actividad {
         this.tipo=tipo;
         this.creador = creador;
 
-        this.actividadesPreviasSugeridas = new ArrayList<>();
-        this.actividadesSeguimientoRecomendadas = new ArrayList<>();
+        this.actividadesPreviasSugeridas = (actividadesPreviasSugeridas != null) ? actividadesPreviasSugeridas : new ArrayList<>();
+        this.actividadesSeguimientoRecomendadas = (actividadesSeguimientoRecomendadas != null) ? actividadesSeguimientoRecomendadas : new ArrayList<>();
+
 
     }
 
