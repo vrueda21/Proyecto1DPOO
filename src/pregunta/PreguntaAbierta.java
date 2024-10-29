@@ -1,30 +1,49 @@
 package pregunta;
 
-public class PreguntaAbierta extends Pregunta{
+public class PreguntaAbierta extends Pregunta {
 
-    private String respuesta; 
+    private String respuestaEstudiante; // Respuesta del estudiante
+    private boolean evaluada; // Indica si ha sido evaluada por el profesor
+    private boolean esCorrecta; // Indica si la respuesta es correcta
+    private String comentarioProfesor; // Comentario del profesor
 
-    public PreguntaAbierta(Tipo tipo, String respuesta){
-        super(tipo);
-        this.respuesta = respuesta;
+    public PreguntaAbierta() {
+        super(Tipo.Abierta);
+        this.evaluada = false;
     }
 
-    public String getRespuesta() {
-        return respuesta;
+    // Método para que el estudiante escriba su respuesta
+    public void setRespuestaEstudiante(String respuestaEstudiante) {
+        this.respuestaEstudiante = respuestaEstudiante;
     }
 
-    public void setRespuesta(String respuesta) {
-        if (respuesta == null || respuesta.trim().isEmpty()){
-            throw new IllegalArgumentException("La respuesta no puede ser nula o vacía");
-        } // Valida que la respuesta no sea nula o vacía
-
-        this.respuesta = respuesta;
+    public String getRespuestaEstudiante() {
+        return respuestaEstudiante;
     }
 
-
-    public void responder(String respuesta){
-        setRespuesta(respuesta); //
+    // Método para que el profesor marque la pregunta como evaluada
+    public void evaluarPorProfesor(boolean esCorrecta, String comentario) {
+        this.evaluada = true;
+        this.esCorrecta = esCorrecta;
+        this.comentarioProfesor = comentario;
     }
 
+    // Indica si la pregunta ha sido evaluada por el profesor
+    @Override
+    public boolean esEvaluada() {
+        return evaluada;
+    }
+
+    @Override
+    public String getRetroalimentacion() {
+        if (!evaluada) {
+            return "Pendiente de evaluación por el profesor.";
+        }
+        return esCorrecta ? "Respuesta correcta. " + comentarioProfesor : "Respuesta incorrecta. " + comentarioProfesor;
+    }
+
+    public boolean esCorrecta() {
+        return evaluada && esCorrecta;
+    }
 
 }

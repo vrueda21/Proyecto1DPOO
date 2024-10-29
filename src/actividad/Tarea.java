@@ -1,62 +1,53 @@
 package actividad;
+
 import usuario.Profesor;
 import usuario.Estudiante;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class Tarea extends Actividad{
+public class Tarea extends Actividad {
 
     protected String submissionMethod;
-    protected Status completada;
 
-    public Tarea(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, String submissionMethod, Obligatoria obligatoria){
-
-        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, status, obligatoria, "tarea");
-        this.submissionMethod="NO ENVIADA";
-        this.completada=Status.Incompleto;
-
+    public Tarea(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
+                 double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
+                 String submissionMethod, Profesor creador, List<Actividad> actividadesPreviasSugeridas, 
+                 List<Actividad> actividadesSeguimientoRecomendadas) {
+        super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
+              fechaLimite, status, obligatoria, "tarea", creador, 
+              actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        this.submissionMethod = submissionMethod;
     }
 
     public String getSubmissionMethod() {
         return submissionMethod;
     }
 
-    public void setSubmissionMethod(String submissionMethod) {
+    // Método para que el estudiante marque la tarea como enviada
+    public void marcarEnviada(Estudiante estudiante, String submissionMethod) throws SecurityException {
+        if (estudiante == null) {
+            throw new SecurityException("Se requiere un estudiante para enviar la tarea.");
+        }
+        if (this.status == Status.Enviada) {
+            throw new UnsupportedOperationException("La tarea ya ha sido enviada y no se puede reenviar.");
+        }
+        this.status = Status.Enviada;
         this.submissionMethod = submissionMethod;
+        System.out.println("La tarea fue marcada como enviada por: " + estudiante.getNombre());
     }
-    public void marcarCompletada(Estudiante estudiante) throws SecurityException{
-        if (estudiante != null) {  
-            this.completada = Status.Completado;
-            System.out.println("La tarea fue marcada como completada por: " + estudiante.getNombre());
-        } else {
-            throw new SecurityException("Un estudiante debe marcar la tarea como completada.");
+
+    // Método para que el profesor evalúe la tarea
+    public void evaluarTarea(Profesor profesor, boolean exitosa) {
+        if (profesor == null || !profesor.equals(creador)) {
+            throw new SecurityException("Solo el profesor creador puede evaluar la tarea.");
         }
+        this.status = exitosa ? Status.Exitosa : Status.noExitosa;
+        System.out.println("La tarea fue marcada como " + (exitosa ? "exitosa" : "fallida") + " por el profesor: " + profesor.getNombre());
     }
 
-
-    public void marcarEnviada(Estudiante estudiante, String submissionMethod) throws SecurityException{
-        if (estudiante != null) {  
-            this.status = Status.Enviada;
-            setSubmissionMethod(submissionMethod);
-            System.out.println("La tarea fue marcada como enviada por: " + estudiante.getNombre());
-        } else {
-            throw new SecurityException("Un estudiante debe marcar la tarea como enviada.");
-        }
+    // Sobrescribir setStatus para evitar cambios directos al estado
+    @Override
+    public void setStatus(Status status) {
+        throw new UnsupportedOperationException("El estado de la tarea solo puede ser cambiado a través de acciones específicas (enviada, completada, evaluada).");
     }
-
-    public void marcarExitosa(Profesor profesor){
-        if (profesor != null) {  // Ensure the teacher is not null
-            this.status = Status.Exitosa;
-            System.out.println("La tarea fue marcada como exitosa por: " + profesor.getNombre());
-        } else {
-            throw new SecurityException("Un profesor debe marcar la tarea como exitosa.");
-        }
-
-    }
-
-    public Status getCompletada() {
-        return completada;
-    }
-    
-
 }

@@ -1,18 +1,16 @@
 package pregunta;
 import java.util.*;
 
+public class PreguntaCerrada extends Pregunta {
 
-public class PreguntaCerrada extends Pregunta{
+    private Dictionary<Opcion, String> opcionA;
+    private Dictionary<Opcion, String> opcionB;
+    private Dictionary<Opcion, String> opcionC;
+    private Dictionary<Opcion, String> opcionD;
+    private Dictionary<Opcion, String> respuesta; // La opción correcta
+    private Dictionary<Opcion, String> escogida; // La opción elegida por el estudiante
 
-    private Dictionary <Opcion, String> opcionA;
-    private Dictionary <Opcion, String> opcionB;
-    private Dictionary <Opcion, String> opcionC;
-    private Dictionary <Opcion, String> opcionD;
-    private Dictionary <Opcion, String> respuesta;
-    private Dictionary <Opcion, String> escogida;
-
-    public PreguntaCerrada(){
-
+    public PreguntaCerrada() {
         super(Tipo.Cerrada);
     }
 
@@ -28,8 +26,8 @@ public class PreguntaCerrada extends Pregunta{
         return opcionB;
     }
 
-    public void setOpcionB(Dictionary<Opcion, String> opcionBD) {
-        this.opcionB = opcionBD;
+    public void setOpcionB(Dictionary<Opcion, String> opcionB) {
+        this.opcionB = opcionB;
     }
 
     public Dictionary<Opcion, String> getOpcionC() {
@@ -44,8 +42,8 @@ public class PreguntaCerrada extends Pregunta{
         return opcionD;
     }
 
-    public void setOpcionD(Dictionary<Opcion, String> opcion) {
-        this.opcionD = opcion;
+    public void setOpcionD(Dictionary<Opcion, String> opcionD) {
+        this.opcionD = opcionD;
     }
 
     public Dictionary<Opcion, String> getRespuesta() {
@@ -56,8 +54,6 @@ public class PreguntaCerrada extends Pregunta{
         this.respuesta = respuesta;
     }
 
-    
-    
     public Dictionary<Opcion, String> getEscogida() {
         return escogida;
     }
@@ -66,50 +62,47 @@ public class PreguntaCerrada extends Pregunta{
         this.escogida = escogida;
     }
 
-    public void elegirRespuesta(Tipo respuesta){
-
-        if (respuesta.name().equals("A")){
-
-            setRespuesta(this.opcionA);
+    // Método modificado para aceptar un String como argumento
+    public void elegirRespuesta(String opcion) {
+        if (opcion.equals("A")) {
+            setEscogida(this.opcionA);
+        } else if (opcion.equals("B")) {
+            setEscogida(this.opcionB);
+        } else if (opcion.equals("C")) {
+            setEscogida(this.opcionC);
+        } else if (opcion.equals("D")) {
+            setEscogida(this.opcionD);
+        } else {
+            throw new IllegalArgumentException("Opción no válida.");
         }
-
-        else if (respuesta.name().equals("B")){
-
-            setRespuesta(this.opcionB);
-        }
-
-        else if (respuesta.name().equals("C")){
-
-            setRespuesta(this.opcionC);
-        }
-        
-        else {
-            setRespuesta(this.opcionD);
-        }
-
     }
 
-    public void escogerOpcion(Tipo respuesta){
-
-        if (respuesta.name().equals("A")){
-
+    // Método original para seleccionar una opción utilizando Tipo
+    public void escogerOpcion(Tipo respuesta) {
+        if (respuesta.name().equals("A")) {
             setEscogida(this.opcionA);
-        }
-
-        else if (respuesta.name().equals("B")){
-
+        } else if (respuesta.name().equals("B")) {
             setEscogida(this.opcionB);
-        }
-
-        else if (respuesta.name().equals("C")){
-
+        } else if (respuesta.name().equals("C")) {
             setEscogida(this.opcionC);
-        }
-        
-        else {
+        } else if (respuesta.name().equals("D")) {
             setEscogida(this.opcionD);
         }
-
     }
 
+    public boolean esEvaluada() {
+        return escogida != null; // Verifica si se ha escogido una opción
+    }
+
+    public boolean esCorrecta() {
+        return escogida != null && escogida.equals(respuesta); // Compara si la opción escogida es la correcta
+    }
+
+    @Override
+    public String getRetroalimentacion() {
+        if (escogida == null) {
+            return "No se ha seleccionado ninguna opción.";
+        }
+        return escogida.equals(respuesta) ? "Respuesta correcta." : "Respuesta incorrecta. La opción correcta era: " + respuesta;
+    }
 }
