@@ -51,16 +51,21 @@ public class Estudiante extends Usuario{
 	}
 
 
-    public void marcarTareaCompletada(Tarea tarea){
+    public void marcarTareaCompletada(Tarea tarea, String submissionMethod){
 
-        tarea.marcarCompletada(this);
+        tarea.setStatus(Status.Enviada);
+        tarea.marcarEnviada(this, submissionMethod);
         listaActividadesCompletadas.add(this.actividadActual);
         listaActividadesPorCompletar.removeFirst();
         this.actividadActual=null;
 
         if (listaActividadesPorCompletar.isEmpty()){
-            agregarLearningPathCompletado();
+            agregarLearningPathCompletado(this.learningPathActual);
         }
+        else{
+            new IllegalStateException("No se han completado todas las actividades para acabar el Learning Path.");
+        }
+
 
     }
 
@@ -100,7 +105,7 @@ public class Estudiante extends Usuario{
 
     }
 
-    public void agregarLearningPathCompletado(){
+    public void agregarLearningPathCompletado(LearningPath learningPathActual){
 
         if (listaActividadesPorCompletar.isEmpty()){
             listaLearningPathsCompletados.add(learningPathActual);
