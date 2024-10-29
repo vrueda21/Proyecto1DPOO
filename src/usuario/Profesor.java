@@ -11,7 +11,7 @@ public class Profesor extends Usuario{
 
     public void marcarTareaExitosa(Tarea tarea){
 
-        tarea.marcarExitosa(this);
+        //tarea.marcarExitosa(this);
 
     }  
 

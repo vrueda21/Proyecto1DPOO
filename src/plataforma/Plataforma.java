@@ -4,12 +4,15 @@ import actividad.Nivel;
 import usuario.*;
 import java.time.*;
 import java.util.*;
+import LPRS.LearningPath;
 
 public class Plataforma {
 
     private static Plataforma plataforma = new Plataforma();
     private Administrador administrador;
     private Map<String, Estudiante> estudiantes;
+    private Map<String, Profesor> profesores;
+    private Map<String, LearningPath> learningPaths;
 
     private Plataforma(){
 
@@ -19,6 +22,7 @@ public class Plataforma {
 
         this.administrador = Administrador.getAdmin();
         this.estudiantes = new HashMap<>();
+        this.profesores = new HashMap<>();
 
     }
     public static Plataforma getPlataforma() {
@@ -38,6 +42,8 @@ public class Plataforma {
         return estudiantes;
     }
 
+    
+
     public boolean agregarEstudiante(Estudiante estudiante){
 
         String correo = estudiante.getCorreo();
@@ -51,6 +57,33 @@ public class Plataforma {
 
     }
 
+    public boolean agregarProfesor(Profesor profesor){
+
+        String correo = profesor.getCorreo();
+        if (profesores.containsKey(correo)){
+            return false;
+        }
+        else{
+            profesores.put(correo, profesor);
+            return true;
+        }
+
+    }
+
+    public boolean agregarLearningPath(LearningPath learningPath){
+
+        String titulo = learningPath.getTitulo();
+        if (learningPaths.containsKey(titulo)){
+            return false;
+        }
+        else{
+            learningPaths.put(titulo, learningPath);
+            return true;
+        }
+
+    } 
+
+
     /**
      
    public void crearActividad(){
@@ -61,5 +94,13 @@ public class Plataforma {
     }
     */
 
+    public Map<String, Profesor> getProfesores() {
+        return profesores;
+    }
+    public Map<String, LearningPath> getLearningPaths() {
+        return learningPaths;
+    }
 
+
+    
 }
