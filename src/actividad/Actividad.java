@@ -120,11 +120,21 @@ public abstract class Actividad {
     }
 
 
-    // Primero empezamos con los metodos asociados al atributo que faltaba que eran las actividades previas y de seguimiento recomendadas
 
-    // Metodos para agregar y eliminar actividades previas y de seguimiento recomendadas, estas solo pueden ser modificadas por profesores
 
-    // Actividades previas sugeridas
+    // Metodos para el sistema de completar y respuesta de estudiantes con respecto a las actividades
+
+    // METODO 1 - RESPONDER (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo responder, a partir de esto obtendremoos las respuestas que se necesiten para las subclases, y estas se mandaran al siguiente metodo:
+
+    // METODO 2 - COMPLETAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo completar, a partir de esto las actividades o se completaran  o seran enviadas exitosamente para qu ese realice la evaluacion correspondiente
+
+    // METODO 3 - EVALUAR (SOLO PARA PROFESORES), la idea es que cada subclase de actividad tenga su propio metodo evaluar, a partir de esto se obtendra la calificacion final de la actividad, y se marcara como exitosa o no dependiendo de la calificacion obtenida. En caso de que la actividad no se completa exitosamente, siguiente metodo:
+
+    // METODO 4 - REINTENTAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo reintentar, a partir de esto se podra reintentar la actividad, y se podra completar nuevamente, en caso de que se complete exitosamente, se podra evaluar nuevamente, para que haya un ciclo de reintentos hasta que se complete exitosamente para la misma actividad, antes de continuar con otra
+
+
+
+    // Metodos para modificacion de las actividades en si
     // Método para agregar una actividad previa sugerida en la clase Actividad
     public void agregarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
         if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
