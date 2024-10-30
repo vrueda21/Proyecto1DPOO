@@ -103,4 +103,28 @@ public class Quiz extends Actividad {
         }
         return false;
     }
+
+    @Override
+    public void responder(Estudiante estudiante, String respuesta) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'responder'");
+    }
+
+    @Override
+    public void esExitosa(Estudiante estudiante) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'esExitosa'");
+    }
+
+    @Override
+    public void evaluar(Profesor profesor, Estudiante estudiante, double calificacionObtenida, boolean exitosa) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'evaluar'");
+    }
+
+    @Override
+    public void reintentar(Estudiante estudiante) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reintentar'");
+    }
 }

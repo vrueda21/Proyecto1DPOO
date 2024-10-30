@@ -50,4 +50,36 @@ public class Tarea extends Actividad {
     public void setStatus(Status status) {
         throw new UnsupportedOperationException("El estado de la tarea solo puede ser cambiado a través de acciones específicas (enviada, completada, evaluada).");
     }
+
+    @Override
+    public void responder(Estudiante estudiante, String respuesta) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'responder'");
+    }
+
+    @Override
+    public void esExitosa(Estudiante estudiante) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'esExitosa'");
+    }
+
+    @Override
+    public void evaluar(Profesor profesor, Estudiante estudiante, double calificacionObtenida, boolean exitosa) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'evaluar'");
+    }
+
+    @Override
+    public void reintentar(Estudiante estudiante) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reintentar'");
+    }
+
+    @Override
+    public Actividad clonarActividad() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'clonarActividad'");
+    }
+
+    
 }

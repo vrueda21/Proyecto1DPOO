@@ -11,6 +11,7 @@ public class Estudiante extends Usuario{
     protected List<LearningPath> listaLearningPathsCompletados;
     protected List<Actividad> listaActividadesCompletadas;
     protected List<Actividad> listaActividadesPorCompletar;
+    protected List<Actividad> listaActividadesPreviasSugeridas;
 
     public Estudiante(String nombre, String contrasenia, String correo){
 
@@ -24,6 +25,19 @@ public class Estudiante extends Usuario{
 
     public Actividad getActividadActual() {
         return actividadActual;
+    }
+
+    public List<Actividad> getActividadesPreviasSugeridas(){
+        return listaActividadesPreviasSugeridas;
+    }
+
+    public boolean actividadesPreviasSugeridasRealizadas(List<Actividad> listaActividadesPreviasSugeridas){
+        for (int i=0; i<listaActividadesPreviasSugeridas.size(); i++){
+            if (!listaActividadesCompletadas.contains(listaActividadesPreviasSugeridas.get(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void setActividadActual(Actividad actividadActual) {
@@ -74,12 +88,33 @@ public class Estudiante extends Usuario{
         if (actividadActual==null){
             if (learningPathActual!=null){
                 if (!listaActividadesPorCompletar.isEmpty()){
-                setActividadActual(listaActividadesPorCompletar.getFirst());
-                return actividadActual;
+                    if(actividadesPreviasSugeridasRealizadas(listaActividadesPreviasSugeridas)){
+                        System.out.println("No se han completado todas las actividades previas sugeridas para comenzar la actividad. Seguro que quieres continuar con esta actividad?");
+                        java.util.Scanner scanner = new java.util.Scanner(System.in);
+                        String respuesta = scanner.nextLine();
+                        if(respuesta.toUpperCase().equals("NO")){
+                            scanner.close();
+                            throw new IllegalStateException("Has decidido no comenzar la actividad.");
+                        }
+                        else if(respuesta.toUpperCase().equals("SI")){
+                            scanner.close();
+                            setActividadActual(listaActividadesPorCompletar.getFirst());
+                            return actividadActual;
+                        }        
+                        else{
+                            scanner.close();
+                            throw new IllegalStateException("Respuesta inválida.");
+                        }                
+                    }
+                    else{
+                        setActividadActual(listaActividadesPorCompletar.getFirst());
+                        return actividadActual;
+                    }
+                        
+                    }
+                else{
+                    throw new IllegalStateException("No hay actividades que quedan por completar.");
                 }
-            else{
-                throw new IllegalStateException("No hay actividades que quedan por completar.");
-            }
             }
             else{
                 throw new IllegalStateException("No hay un Learning Path que se está siguiendo actualmente; escoja uno y vuelva a intentar.");
@@ -89,6 +124,7 @@ public class Estudiante extends Usuario{
         else{
             throw new IllegalStateException("No se puede comenzar una actividad nueva porque hay una en progreso.");
         }
+        
     }
     
     

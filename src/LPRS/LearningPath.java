@@ -24,7 +24,7 @@ public class LearningPath {
     protected List<Actividad> listaActividadesCompletadas;
 
 
-    public LearningPath(String titulo, Nivel nivelDificultad, String descripcion, String objetivos, int duracionMinutos, Profesor creador, float rating){
+    public LearningPath(String titulo, Nivel nivelDificultad, String descripcion, String objetivos, int duracionMinutos, Profesor creador, float rating, List<Actividad> listaActividades){
 
         this.titulo=titulo;
         this.nivelDificultad=nivelDificultad;
@@ -149,6 +149,21 @@ public class LearningPath {
         }
     }
 
+    public void eliminarActividad(Actividad actividad) {
+        if (!listaActividades.contains(actividad)) {
+            throw new IllegalArgumentException("La actividad no está en la lista de actividades del Learning Path.");
+        } 
+        else {
+            listaActividades.remove(actividad);
+            if (listaActividades.stream().noneMatch(Actividad::esObligatoria)) {
+                listaActividades.add(actividad);
+                throw new IllegalStateException("El Learning Path debe contener al menos una actividad obligatoria.");
+            }
+            this.fechaModificacion=LocalDateTime.now();
+            setVersion();
+        }
+    }
+
 
     public boolean tieneActividadObligatoria() {
         return listaActividades.stream().anyMatch(actividad -> actividad.esObligatoria());
@@ -223,5 +238,7 @@ public class LearningPath {
     public void setRating(float rating){
         this.rating = rating;
     }
+    
+    
     
 }
