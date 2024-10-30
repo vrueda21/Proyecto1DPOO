@@ -68,7 +68,6 @@ public class Estudiante extends Usuario{
     public void marcarTareaCompletada(Tarea tarea, String submissionMethod){
 
         tarea.setStatus(Status.Enviada);
-        tarea.marcarEnviada(this, submissionMethod);
         listaActividadesCompletadas.add(this.actividadActual);
         listaActividadesPorCompletar.removeFirst();
         this.actividadActual=null;
@@ -129,11 +128,14 @@ public class Estudiante extends Usuario{
     
     
     public void comenzarLearningPath(LearningPath learningPath){
-        if (learningPathActual==null){
+        if (learningPathActual==null && !listaLearningPathsCompletados.contains(learningPathActual) ){
             setLearningPathActual(learningPath);
             this.listaActividadesPorCompletar = new ArrayList<>();
             listaActividadesPorCompletar.addAll(learningPath.getListaActividades());
 
+        }
+        else if (listaLearningPathsCompletados.contains(learningPathActual)){
+            throw new IllegalStateException("No se puede comenzar un Learning Path que ya ha sido completado.");
         }
         else{
             throw new IllegalStateException("No se puede comenzar un Learning Path cuando ya hay uno en curso.");

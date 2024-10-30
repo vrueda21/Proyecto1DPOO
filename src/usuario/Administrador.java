@@ -1,5 +1,8 @@
 package usuario;
 
+import LPRS.LearningPath;
+import actividad.Actividad;
+
 public class Administrador extends Usuario{
 
     private static Administrador admin = new Administrador();
@@ -17,5 +20,37 @@ public class Administrador extends Usuario{
         }
         return admin;
     }
+
+    public void crearProfesor(String nombre, String contrasenia, String correo){
+
+        Profesor profesor = new Profesor(nombre, contrasenia, correo);
+
+    }
+
+    public void crearEstudiante(String nombre, String contrasenia, String correo){
+
+        Estudiante estudiante = new Estudiante(nombre, contrasenia, correo);
+
+    }
+
+    public void eliminarUsuario(Usuario usuario){
+
+        usuario = null;
+
+    }
+
+    public void eliminarLearningPath(LearningPath learningPath){
+
+        learningPath = null;
+
+    }
+    
+    public void eliminarActividad(Actividad actividad){
+
+        actividad = null;
+
+    }
+    
+    
 
 }
