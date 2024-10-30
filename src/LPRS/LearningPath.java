@@ -216,23 +216,24 @@ public class LearningPath {
         this.listaActividadesCompletadas = new ArrayList<>(new HashSet<>(this.listaActividadesCompletadasConDup));
     }
     
-    public float calcularProgreso() {
+    public float calcularProgreso(Estudiante estudiante) {
         int totalObligatorias = (int) listaActividades.stream()
-        .filter(Actividad::esObligatoria) // Filtrar solo las obligatorias
-        .count();
-
-        // Contar el número de actividades obligatorias que se han completado
+            .filter(Actividad::esObligatoria) // Filtrar solo las obligatorias
+            .count();
+    
+        // Contar el número de actividades obligatorias que el estudiante ha completado con éxito
         int completadasObligatorias = (int) listaActividadesCompletadas.stream()
-        .filter(a -> a.esObligatoria() && a.esExitosa()) // Filtrar solo las completadas
-        .count();
-
+            .filter(a -> a.esObligatoria() && a.esExitosa(estudiante)) // Verificar el éxito para el estudiante
+            .count();
+    
         this.progreso = totalObligatorias == 0 ? 0 : (float) completadasObligatorias / totalObligatorias * 100;
-        if(this.progreso == 100){
+        if (this.progreso == 100) {
             this.status = Status.Completado;
         }
-        // Calcular el porcentaje de progreso
+        
         return progreso;
     }
+    
 
     public float getRating(){
         return rating;
