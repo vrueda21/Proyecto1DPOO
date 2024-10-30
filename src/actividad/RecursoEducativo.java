@@ -40,4 +40,7 @@ public class RecursoEducativo extends Actividad {
     public void setStatus(Status status) {
         throw new UnsupportedOperationException("El estado del recurso educativo solo puede cambiar a Completado al marcarlo como revisado.");
     }
+
+    @Override
+    public void responder
 }
