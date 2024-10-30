@@ -126,13 +126,16 @@ public abstract class Actividad {
 
     // METODO 1 - RESPONDER (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo responder, a partir de esto obtendremoos las respuestas que se necesiten para las subclases, y estas se mandaran al siguiente metodo:
 
+    // Declaramos el metodo responder, que sera implementado en las subclases de actividad
+
+    public abstract void responder(Estudiante estudiante); // No hay un atributo de respuestas porque esto depende de la subclase, puede que requiera escribir algo, o mas bien seleccionar una opcion, etc.
     // METODO 2 - COMPLETAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo completar, a partir de esto las actividades o se completaran  o seran enviadas exitosamente para qu ese realice la evaluacion correspondiente
 
     // METODO 3 - EVALUAR (SOLO PARA PROFESORES), la idea es que cada subclase de actividad tenga su propio metodo evaluar, a partir de esto se obtendra la calificacion final de la actividad, y se marcara como exitosa o no dependiendo de la calificacion obtenida. En caso de que la actividad no se completa exitosamente, siguiente metodo:
 
     // METODO 4 - REINTENTAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo reintentar, a partir de esto se podra reintentar la actividad, y se podra completar nuevamente, en caso de que se complete exitosamente, se podra evaluar nuevamente, para que haya un ciclo de reintentos hasta que se complete exitosamente para la misma actividad, antes de continuar con otra
 
-
+    // METODO 5 FINAL - PERSISTENCIA - GUARDAR EN BASE DE DATOS, la idea es que cada subclase de actividad tenga su propio metodo guardar en base de datos, a partir de esto se guardara la actividad en la base de datos, y se podra recuperar en caso de que se necesite, para que se pueda continuar con la actividad en otro momento, o se pueda revisar en caso de que se necesite. Su funcion principal deberia permitir que los profesores puedan revisar las respuestas que son marcadas como enviadas, para que luego ellos las evaluen, y puedan marcarlas como exitosas o no exitosas, y que los estudiantes puedan reintentar las actividades que no completaron exitosamente, y que puedan completarlas exitosamente, y que puedan ver sus calificaciones obtenidas en las actividades completadas exitosamente.
 
     // Metodos para modificacion de las actividades en si
     // Método para agregar una actividad previa sugerida en la clase Actividad
