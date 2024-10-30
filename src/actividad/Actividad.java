@@ -120,6 +120,7 @@ public abstract class Actividad {
     }
 
 
+    public abstract Actividad clonarActividad();
 
 
     // Metodos para el sistema de completar y respuesta de estudiantes con respecto a las actividades
