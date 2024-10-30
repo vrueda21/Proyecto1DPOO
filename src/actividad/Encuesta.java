@@ -1,97 +1,74 @@
 package actividad;
 
-import pregunta.Pregunta;
-import usuario.Usuario;
-import usuario.Profesor;
+import pregunta.PreguntaAbierta;
 import usuario.Estudiante;
+import usuario.Profesor;
+import LPRS.LearningPath;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Encuesta extends Actividad {
 
-    private ArrayList<Pregunta> listaPreguntas; // Lista de preguntas de la encuesta
-    private boolean completada; // Indica si la encuesta ha sido completada
+    private ArrayList<PreguntaAbierta> listaPreguntas; // Lista de preguntas abiertas de la encuesta
 
     public Encuesta(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
                     double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
-                    String tipo, ArrayList<Pregunta> listaPreguntas, Profesor creador) {
+                    Profesor creador, ArrayList<PreguntaAbierta> listaPreguntas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, tipo, creador, null, null);
+              fechaLimite, status, obligatoria, "encuesta", creador, null, null);
         this.listaPreguntas = listaPreguntas;
-        this.completada = false; // Inicialmente, la encuesta no está completada
     }
 
-    // Método para obtener la lista de preguntas
-    public ArrayList<Pregunta> getListaPreguntas() {
-        return listaPreguntas;
-    }
-
-    // Método para agregar preguntas a la encuesta (solo profesores)
-    public void agregarPregunta(Pregunta pregunta, Usuario usuario) {
-        if (usuario instanceof Profesor && usuario.equals(creador)) {
-            listaPreguntas.add(pregunta);
-            System.out.println("Pregunta agregada a la encuesta por: " + usuario.getNombre());
-        } else {
-            throw new SecurityException("Solo el profesor creador puede agregar preguntas a la encuesta.");
-        }
-    }
-
-    // Método para eliminar preguntas de la encuesta (solo profesores)
-    public void eliminarPregunta(Pregunta pregunta, Usuario usuario) {
-        if (usuario instanceof Profesor && usuario.equals(creador)) {
-            listaPreguntas.remove(pregunta);
-            System.out.println("Pregunta eliminada de la encuesta por: " + usuario.getNombre());
-        } else {
-            throw new SecurityException("Solo el profesor creador puede eliminar preguntas de la encuesta.");
-        }
-    }
-
-    // Método para completar la encuesta por un estudiante
-    public void completarEncuesta(Estudiante estudiante, ArrayList<String> respuestasEstudiante) {
-        if (estudiante == null) {
-            throw new SecurityException("Un estudiante debe completar la encuesta.");
-        }
-
-        if (completada) {
-            throw new UnsupportedOperationException("La encuesta ya ha sido completada y no puede repetirse.");
-        }
-
-        if (respuestasEstudiante.size() != listaPreguntas.size()) {
-            throw new IllegalArgumentException("Debe responder todas las preguntas para completar la encuesta.");
-        }
-
-        // Marcar la encuesta como completada
-        completada = true;
-        this.status = Status.Completado; // Cambiar el estado de la encuesta
-        System.out.println("La encuesta fue completada por: " + estudiante.getNombre());
-    }
-
-    // Indica si la encuesta ha sido completada
-    public boolean isCompletada() {
-        return completada;
-    }
-
+    // Método para responder la encuesta por un estudiante
     @Override
     public void responder(Estudiante estudiante, String respuesta) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'responder'");
+        if (estudiante == null) {
+            throw new SecurityException("Un estudiante debe responder la encuesta.");
+        }
+
+        if (this.status == Status.Completado) {
+            throw new UnsupportedOperationException("La encuesta ya ha sido completada.");
+        }
+
+        // Simulación de respuestas: se espera una lista de respuestas separadas por comas (una por cada pregunta)
+        String[] respuestasEstudiante = respuesta.split(",");
+        if (respuestasEstudiante.length != listaPreguntas.size()) {
+            throw new IllegalArgumentException("Debe responder a todas las preguntas de la encuesta.");
+        }
+
+        // Guardar las respuestas en las preguntas abiertas
+        for (int i = 0; i < listaPreguntas.size(); i++) {
+            PreguntaAbierta pregunta = listaPreguntas.get(i);
+            pregunta.setRespuestaEstudiante(respuestasEstudiante[i]); // Asignar la respuesta del estudiante
+        }
+
+        this.status = Status.Completado; // Cambiar el estado de la encuesta a completada
+        System.out.println("La encuesta ha sido completada por: " + estudiante.getNombre());
     }
 
+    // Método para verificar si la encuesta es exitosa (si fue completada)
     @Override
-    public void esExitosa(Estudiante estudiante) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'esExitosa'");
+    public boolean esExitosa(Estudiante estudiante) {
+        if (this.status == Status.Completado) {
+            System.out.println("La encuesta ha sido completada exitosamente por: " + estudiante.getNombre());
+            return true;
+        } else {
+            System.out.println("La encuesta no ha sido completada por: " + estudiante.getNombre());
+            return false;
+        }
     }
 
+    // Método de evaluación (no aplica para Encuesta)
     @Override
-    public void evaluar(Profesor profesor, Estudiante estudiante, double calificacionObtenida, boolean exitosa) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'evaluar'");
+    public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        // No se necesita implementación para Encuesta
+        throw new UnsupportedOperationException("Las encuestas no requieren evaluación.");
     }
 
+    // Método de reintentar (no aplica para Encuesta)
     @Override
     public void reintentar(Estudiante estudiante) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'reintentar'");
+        // No se necesita implementación para Encuesta
+        throw new UnsupportedOperationException("Las encuestas no se pueden reintentar.");
     }
 }
