@@ -130,8 +130,8 @@ public abstract class Actividad {
 
     public abstract void responder(Estudiante estudiante, String respuesta); // Habra un atributo respuesta que sera String pero se adaptara a las necesidades de cada subclase de actividad
 
-    // METODO 2 - COMPLETAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo completar, a partir de esto las actividades o se completaran  o seran enviadas exitosamente para qu ese realice la evaluacion correspondiente
-    public abstract void completar(Estudiante estudiante);
+    // METODO 2 - EXITOSA (SOLO PARA ESTUDIANTES), verificar si la actividad fue exitosa o no, a partir de la respuesta obtenida en el metodo responder, y se mandara al siguiente metodo en el caso de que no se pueda automatizar, como en el caso de las actividades que tengan preguntas de tipo abierta
+    public abstract void esExitosa(Estudiante estudiante);
     // METODO 3 - EVALUAR (SOLO PARA PROFESORES), la  idea es que cada subclase de actividad tenga su propio metodo evaluar, a partir de esto se obtendra la calificacion final de la actividad, y se marcara como exitosa o no dependiendo de la calificacion obtenida. En caso de que la actividad no se completa exitosamente, siguiente metodo:
     public abstract void evaluar(Profesor profesor, Estudiante estudiante, double calificacionObtenida, boolean exitosa);
     // METODO 4 - REINTENTAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo reintentar, a partir de esto se podra reintentar la actividad, y se podra completar nuevamente, en caso de que se complete exitosamente, se podra evaluar nuevamente, para que haya un ciclo de reintentos hasta que se complete exitosamente para la misma actividad, antes de continuar con otra
@@ -141,7 +141,7 @@ public abstract class Actividad {
     // Metodos para modificacion de las actividades en si
     // Método para agregar una actividad previa sugerida en la clase Actividad
     public void agregarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path.");
         }
 
@@ -161,7 +161,7 @@ public abstract class Actividad {
     }
 
     public void eliminarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path.");
         }
 
@@ -175,7 +175,7 @@ public abstract class Actividad {
 
     // Actividades de seguimiento recomendadas
     public void agregarActividadSeguimiento(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path.");
         }
 
@@ -190,7 +190,7 @@ public abstract class Actividad {
     }
 
     public void eliminarActividadSeguimiento(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path.");
         }
 
@@ -204,28 +204,28 @@ public abstract class Actividad {
 
     // Métodos de modificación de atributos clave (Setters con verificación de inscripciones en Learning Path)
     public void setDescripcion(String descripcion, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar la descripción si hay estudiantes inscritos en el Learning Path.");
         }
         this.descripcion = descripcion;
     }
 
     public void setNivelDificultad(Nivel nivelDificultad, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar el nivel de dificultad si hay estudiantes inscritos en el Learning Path.");
         }
         this.nivelDificultad = nivelDificultad;
     }
 
     public void setObjetivo(String objetivo, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar el objetivo si hay estudiantes inscritos en el Learning Path.");
         }
         this.objetivo = objetivo;
     }
 
     public void setDuracionEsperada(int duracionEsperada, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar la duración esperada si hay estudiantes inscritos en el Learning Path.");
         }
         this.duracionEsperada = duracionEsperada;
@@ -233,7 +233,7 @@ public abstract class Actividad {
 
 
     public void setFechaLimite(LocalDateTime fechaLimite, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar la fecha límite si hay estudiantes inscritos en el Learning Path.");
         }
         if (fechaLimite.isBefore(this.fechaInicio)) {
@@ -243,31 +243,35 @@ public abstract class Actividad {
     }
 
     public void setVersion(double version, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar la versión si hay estudiantes inscritos en el Learning Path.");
         }
         this.version = version;
     }
 
     public void setObligatoria(Obligatoria obligatoria, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar si la actividad es obligatoria u opcional si hay estudiantes inscritos en el Learning Path.");
         }
         this.obligatoria = obligatoria;
     }
 
     public void setFechaInicio(LocalDateTime fechaInicio, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar la fecha de inicio si hay estudiantes inscritos en el Learning Path.");
         }
         this.fechaInicio = fechaInicio;
     }
 
     public void setTipo(String tipo, LearningPath learningPath) {
-        if (learningPath.hayEstudiantesInscritosParaActividad(this)) {
+        if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se puede modificar el tipo de la actividad si hay estudiantes inscritos en el Learning Path.");
         }
         this.tipo = tipo;
+    }
+
+    public boolean esObligatoria(){
+        return obligatoria.equals(Obligatoria.SI);
     }
 
 
