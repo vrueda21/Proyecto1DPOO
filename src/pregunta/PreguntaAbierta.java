@@ -7,8 +7,9 @@ public class PreguntaAbierta extends Pregunta {
     private boolean esCorrecta; // Indica si la respuesta es correcta
     private String comentarioProfesor; // Comentario del profesor
 
-    public PreguntaAbierta() {
-        super(Tipo.Abierta);
+    // Constructor modificado para aceptar el enunciado
+    public PreguntaAbierta(String enunciado) {
+        super(Tipo.Abierta, enunciado); // Llamar al constructor de Pregunta con enunciado
         this.evaluada = false;
     }
 
@@ -42,8 +43,8 @@ public class PreguntaAbierta extends Pregunta {
         return esCorrecta ? "Respuesta correcta. " + comentarioProfesor : "Respuesta incorrecta. " + comentarioProfesor;
     }
 
+    @Override
     public boolean esCorrecta() {
         return evaluada && esCorrecta;
     }
-
 }

@@ -18,6 +18,31 @@ public class Profesor extends Usuario {
     // Método para evaluar la tarea
     public void evaluarTarea(Tarea tarea, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
         tarea.evaluar(this, estudiante, learningPath, calificacionObtenida, exitosa);
+        System.out.println("La tarea fue evaluada por el profesor: " + this.getNombre());
+    }
+
+    // Método para evaluar el examen
+    public void evaluarExamen(Examen examen, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        examen.evaluar(this, estudiante, learningPath, calificacionObtenida, exitosa);
+        System.out.println("El examen fue evaluado por el profesor: " + this.getNombre());
+    }
+
+    // Método para evaluar el quiz (aunque no requiere evaluación directa, podemos verificar su estado)
+    public void revisarQuiz(Quiz quiz, Estudiante estudiante) {
+        if (quiz.esExitosa(estudiante)) {
+            System.out.println("El quiz ha sido completado exitosamente.");
+        } else {
+            System.out.println("El quiz no ha sido aprobado.");
+        }
+    }
+
+    // Método para revisar la encuesta (aunque no se evalúa directamente)
+    public void revisarEncuesta(Encuesta encuesta, Estudiante estudiante) {
+        if (encuesta.esExitosa(estudiante)) {
+            System.out.println("La encuesta ha sido completada por el estudiante: " + estudiante.getNombre());
+        } else {
+            System.out.println("La encuesta no ha sido completada.");
+        }
     }
 
     // Método para crear un Learning Path

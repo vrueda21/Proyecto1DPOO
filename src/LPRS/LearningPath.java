@@ -243,6 +243,9 @@ public class LearningPath {
         this.rating = rating;
     }
     
+    public List<Estudiante> getEstudiantesInscritos(){
+        return estudiantesInscritos;
+    }
     
     
 }

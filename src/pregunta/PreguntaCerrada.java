@@ -10,8 +10,9 @@ public class PreguntaCerrada extends Pregunta {
     private Dictionary<Opcion, String> respuesta; // La opción correcta
     private Dictionary<Opcion, String> escogida; // La opción elegida por el estudiante
 
-    public PreguntaCerrada() {
-        super(Tipo.Cerrada);
+    // Constructor modificado para aceptar el enunciado
+    public PreguntaCerrada(String enunciado) {
+        super(Tipo.Cerrada, enunciado); // Llamar al constructor de Pregunta con enunciado
     }
 
     public Dictionary<Opcion, String> getOpcionA() {
@@ -90,10 +91,12 @@ public class PreguntaCerrada extends Pregunta {
         }
     }
 
+    @Override
     public boolean esEvaluada() {
         return escogida != null; // Verifica si se ha escogido una opción
     }
 
+    @Override
     public boolean esCorrecta() {
         return escogida != null && escogida.equals(respuesta); // Compara si la opción escogida es la correcta
     }

@@ -3,46 +3,42 @@ package pregunta;
 public abstract class Pregunta {
 
     protected Tipo tipo;
-
-    protected String enunciado;
-
+    protected String enunciado; // Enunciado de la pregunta
     protected String retroalimentacion; // Retroalimentación de la pregunta
-    
-    public Pregunta(Tipo tipo){
+
+    // Constructor modificado para aceptar el enunciado
+    public Pregunta(Tipo tipo, String enunciado) {
+        if (enunciado == null || enunciado.isEmpty()) {
+            throw new IllegalArgumentException("El enunciado de la pregunta no puede ser nulo o vacío");
+        }
         this.tipo = tipo;
-        this.enunciado = "Enunciado de la pregunta";
+        this.enunciado = enunciado;
     }
 
     public Tipo getTipo() {
         return tipo;
     }
 
-    public String getEnunciado(){
+    public String getEnunciado() {
         return enunciado;
     }
 
     public void setEnunciado(String enunciado) {
-        if (enunciado == null || enunciado.isEmpty()){
+        if (enunciado == null || enunciado.isEmpty()) {
             throw new IllegalArgumentException("El enunciado de la pregunta no puede ser nulo o vacío");
-        } // Valida que el enunciado no sea nulo o vacío
-
+        }
         this.enunciado = enunciado;
     }
 
     public void setTipo(Tipo tipo) {
-        if (tipo == null){
+        if (tipo == null) {
             throw new IllegalArgumentException("El tipo de pregunta no puede ser nulo");
-        } // Valida que el tipo no sea nulo
-
+        }
         this.tipo = tipo;
     }
 
-// Metodo abstracto para verificar si la pregunta ha sido evaluda por el profesor
-public abstract boolean esEvaluada();
-
-// Metodo abstracto para obtener la retroalimentacion de la pregunta
-public abstract String getRetroalimentacion();
-
-public abstract boolean esCorrecta();
-
+    // Métodos abstractos
+    public abstract boolean esEvaluada();
+    public abstract String getRetroalimentacion();
+    public abstract boolean esCorrecta();
 }
