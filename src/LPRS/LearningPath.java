@@ -184,7 +184,10 @@ public class LearningPath {
         return !this.estudiantesInscritos.isEmpty();
     } // verificarSiHayInscritos se debe utilizar para verificar si hay estudiantes inscritos en un learning path
 
-
+    public boolean verificarActividad(Actividad actividad) {
+        return this.listaActividades.contains(actividad);
+        
+    } // verificarActividad se debe utilizar para verificar si una actividad está asociada a un learning path
     public void eliminarInscripcion(Estudiante estudiante) {
         if (!this.estudiantesInscritos.contains(estudiante)) {
             throw new IllegalArgumentException("El estudiante no está inscrito en este Learning Path.");

@@ -1,106 +1,120 @@
 package actividad;
 
-import pregunta.Pregunta;
 import pregunta.PreguntaCerrada;
-import pregunta.PreguntaAbierta;
 import usuario.Estudiante;
 import usuario.Profesor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import LPRS.LearningPath;
+
 public class Quiz extends Actividad {
 
-    protected List<Pregunta> listaPreguntas;
+    protected List<PreguntaCerrada> listaPreguntas; // Lista de preguntas cerradas
     protected double calificacionMinima; // Calificación mínima para aprobar
-    private boolean completadoUnaVez;
     private double calificacionObtenida; // Nota final obtenida por el estudiante
-    private boolean evaluacionCompleta; // Indica si todas las preguntas han sido evaluadas
 
     public Quiz(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
                 double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
-                List<Pregunta> listaPreguntas, double calificacionMinima, Profesor creador, 
+                List<PreguntaCerrada> listaPreguntas, double calificacionMinima, Profesor creador, 
                 List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
               fechaLimite, status, obligatoria, "quiz", creador, 
               actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
         this.calificacionMinima = calificacionMinima;
-        this.completadoUnaVez = false;
         this.calificacionObtenida = 0.0;
-        this.evaluacionCompleta = false;
     }
 
-    // Método para calcular la nota obtenida en el quiz
-    private void calcularNotaObtenida() {
-        int totalPreguntas = listaPreguntas.size(); // Total de preguntas en el quiz
-        int preguntasCorrectas = 0; // Inicializar el contador de respuestas correctas
-
-        for (Pregunta pregunta : listaPreguntas) {
-            if (pregunta instanceof PreguntaCerrada) {
-                PreguntaCerrada preguntaCerrada = (PreguntaCerrada) pregunta;
-                if (preguntaCerrada.esCorrecta()) {
-                    preguntasCorrectas++;
-                }
-            } else if (pregunta instanceof PreguntaAbierta) {
-                PreguntaAbierta preguntaAbierta = (PreguntaAbierta) pregunta;
-                if (preguntaAbierta.esEvaluada() && preguntaAbierta.esCorrecta()) {
-                    preguntasCorrectas++;
-                }
-            }
-        }
-
-        // Calcular la nota final como porcentaje de preguntas correctas
-        calificacionObtenida = ((double) preguntasCorrectas / totalPreguntas) * 100;
-    }
-
-    // Método para completar el quiz (inicialmente para preguntas cerradas)
-    public void completarQuiz(Estudiante estudiante) {
+    // Método para responder al quiz completo
+    @Override
+    public void responder(Estudiante estudiante, String respuesta) {
         if (estudiante == null) {
-            throw new SecurityException("Un estudiante debe completar el quiz.");
+            throw new SecurityException("Se requiere un estudiante para completar el quiz.");
         }
 
-        if (completadoUnaVez) {
-            throw new UnsupportedOperationException("El quiz no se puede repetir una vez aprobado.");
+        if (this.status == Status.Exitosa) {
+            throw new UnsupportedOperationException("El quiz ya ha sido completado exitosamente y no se puede repetir.");
         }
 
-        // Verificar si hay preguntas abiertas sin evaluar
-        if (hayPreguntasAbiertasPendientes()) {
-            System.out.println("El quiz contiene preguntas abiertas que deben ser evaluadas por un profesor.");
-            this.status = Status.Enviada; // Estado temporal hasta que el profesor complete la evaluación
-        } else {
-            // Calificar automáticamente si no hay preguntas abiertas pendientes
-            calcularNotaObtenida(); // Calcula la nota obtenida por el estudiante
-            calcularCalificacionFinal(estudiante); // Determina si el quiz fue aprobado o no
-        }
-    }
+        int preguntasCorrectas = 0; // Contador de respuestas correctas
 
-    // Método para calcular la calificación final del quiz
-    private void calcularCalificacionFinal(Estudiante estudiante) {
-        if (evaluacionCompleta || !hayPreguntasAbiertasPendientes()) {
-            if (calificacionObtenida >= calificacionMinima) {
-                this.status = Status.Exitosa;
-                completadoUnaVez = true;
-                if (estudiante != null) {
-                    System.out.println("El quiz fue completado exitosamente por: " + estudiante.getNombre() + " con una nota de " + calificacionObtenida + "%.");
+        // La respuesta del estudiante debe seguir el formato "1:A,2:B,3:C"
+        String[] respuestas = respuesta.split(",");
+
+        for (String respuestaEstudiante : respuestas) {
+            String[] partes = respuestaEstudiante.split(":");
+            int indicePregunta = Integer.parseInt(partes[0]) - 1; // Convertir índice de pregunta
+            String opcionSeleccionada = partes[1]; // Opción seleccionada por el estudiante
+
+            if (indicePregunta >= 0 && indicePregunta < listaPreguntas.size()) {
+                PreguntaCerrada pregunta = listaPreguntas.get(indicePregunta);
+
+                // Marcar la opción elegida por el estudiante
+                try {
+                    pregunta.elegirRespuesta(opcionSeleccionada);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Opción no válida para la pregunta " + (indicePregunta + 1) + ". " + e.getMessage());
+                    continue; // Continuar con la siguiente pregunta
                 }
+
+                // Verificar si la respuesta es correcta
+                if (pregunta.esCorrecta()) {
+                    preguntasCorrectas++;
+                }
+
+                // Mostrar retroalimentación de la pregunta
+                System.out.println("Pregunta " + (indicePregunta + 1) + ": " + pregunta.getRetroalimentacion());
             } else {
-                this.status = Status.noExitosa;
-                if (estudiante != null) {
-                    System.out.println("El quiz no fue aprobado por: " + estudiante.getNombre() + ". Nota obtenida: " + calificacionObtenida + "%.");
-                }
+                System.out.println("Índice de pregunta no válido: " + (indicePregunta + 1));
             }
+        }
+
+        // Calcular la nota final obtenida
+        calificacionObtenida = ((double) preguntasCorrectas / listaPreguntas.size()) * 100;
+
+        // Verificar si se alcanzó la calificación mínima para aprobar
+        if (calificacionObtenida >= calificacionMinima) {
+            this.status = Status.Exitosa;
+            System.out.println("El quiz fue completado exitosamente con una calificación de " + calificacionObtenida + "%.");
         } else {
-            throw new IllegalStateException("El quiz no puede ser calificado hasta que todas las preguntas abiertas sean evaluadas.");
+            this.status = Status.noExitosa;
+            System.out.println("El quiz no fue aprobado. Calificación obtenida: " + calificacionObtenida + "%.");
         }
     }
 
-    // Verificar si hay preguntas abiertas sin evaluar
-    private boolean hayPreguntasAbiertasPendientes() {
-        for (Pregunta pregunta : listaPreguntas) {
-            if (pregunta instanceof PreguntaAbierta && !pregunta.esEvaluada()) {
-                return true;
-            }
+    // Método para verificar si el quiz es exitoso (cumple la calificación mínima)
+    @Override
+    public boolean esExitosa(Estudiante estudiante) {
+        if (this.status == Status.Exitosa) {
+            System.out.println("El quiz fue completado exitosamente por: " + estudiante.getNombre());
+            return true;
+        } else {
+            System.out.println("El quiz no fue aprobado por: " + estudiante.getNombre());
+            return false;
         }
-        return false;
+    }
+
+    // Método para reintentar el quiz
+    @Override
+    public void reintentar(Estudiante estudiante) {
+        if (this.status == Status.Exitosa) {
+            throw new UnsupportedOperationException("El quiz ya fue completado exitosamente y no se puede repetir.");
+        } else {
+            System.out.println("El estudiante " + estudiante.getNombre() + " puede iniciar o volver a intentar el quiz.");
+            // Reiniciar el estado del quiz para reintento
+            this.calificacionObtenida = 0.0;
+            for (PreguntaCerrada pregunta : listaPreguntas) {
+                pregunta.setEscogida(null); // Reiniciar la respuesta elegida
+            }
+            this.status = Status.Incompleto;
+        }
+    }
+
+    // Implementación vacía del método evaluar, ya que no se requiere para Quiz
+    @Override
+        public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        // No se necesita implementación para Quiz
+        System.out.println("El profesor " + profesor.getNombre() + " no puede evaluar el quiz.");
     }
 }

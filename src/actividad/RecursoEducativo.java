@@ -5,10 +5,11 @@ import usuario.Profesor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import LPRS.LearningPath;
 
 public class RecursoEducativo extends Actividad {
 
-    protected String tipoRecurso;
+    protected String tipoRecurso; // Tipo de recurso educativo (e.g., video, documento, etc.)
 
     public RecursoEducativo(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
                             double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
@@ -24,23 +25,50 @@ public class RecursoEducativo extends Actividad {
         return tipoRecurso;
     }
 
-    // Método para marcar el recurso como revisado por un estudiante
-    public void marcarRevisado(Estudiante estudiante) {
+    // Método para responder al recurso educativo (marcarlo como revisado)
+    @Override
+    public void responder(Estudiante estudiante, String respuesta) {
         if (estudiante == null) {
             throw new SecurityException("Se requiere un estudiante para marcar el recurso educativo como revisado.");
         }
-        if (this.status == Status.Completado) {
-            throw new UnsupportedOperationException("El recurso educativo ya ha sido marcado como revisado y no se puede repetir.");
+        
+        if (this.status == Status.Exitosa) {
+            throw new UnsupportedOperationException("El recurso educativo ya ha sido completado exitosamente.");
         }
-        this.status = Status.Completado;
-        System.out.println("El recurso educativo fue marcado como revisado por: " + estudiante.getNombre());
+
+        // La respuesta válida es "visto" para marcar el recurso como revisado
+        if ("visto".equalsIgnoreCase(respuesta)) {
+            this.status = Status.Exitosa;
+            System.out.println("El recurso educativo fue marcado como revisado por: " + estudiante.getNombre());
+        } else {
+            System.out.println("Respuesta no válida para Recurso Educativo. Para marcar como revisado, responde 'visto'.");
+        }
+    }
+
+    // Método para verificar si el recurso educativo es exitoso (revisado)
+    @Override
+    public boolean esExitosa(Estudiante estudiante) {
+        if (this.status == Status.Exitosa) {
+            System.out.println("El recurso educativo fue completado exitosamente por: " + estudiante.getNombre());
+            return true;
+        } else {
+            System.out.println("El recurso educativo no ha sido completado por: " + estudiante.getNombre());
+            return false;
+        }
+    }
+
+    @Override
+        public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        // No se necesita implementación para Recurso Educativo
+    }
+
+    @Override
+    public void reintentar(Estudiante estudiante) {
+        // No se necesita implementación para Recurso Educativo
     }
 
     @Override
     public void setStatus(Status status) {
-        throw new UnsupportedOperationException("El estado del recurso educativo solo puede cambiar a Completado al marcarlo como revisado.");
+        throw new UnsupportedOperationException("El estado del recurso educativo solo puede cambiar a través de acciones específicas (revisado).");
     }
-
-    @Override
-    public void responder
 }
