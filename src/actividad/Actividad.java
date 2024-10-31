@@ -274,6 +274,7 @@ public abstract class Actividad {
     }
 
     public boolean esObligatoria(){
+        // Retornar "SI" si la actividad es obligatoria, "NO" si es opcional
         return obligatoria.equals(Obligatoria.SI);
     }
 

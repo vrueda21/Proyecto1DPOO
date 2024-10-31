@@ -12,27 +12,27 @@ import java.util.stream.Collectors; // Importar la clase Collectors para utiliza
 
 public class LearningPath {
 
-    protected String titulo;
-    protected Nivel nivelDificultad;
-    protected String descripcion;
-    protected String objetivos;
-    protected int duracionMinutos;
-    protected LocalDateTime fechaCreacion;
-    protected LocalDateTime fechaModificacion;
-    protected int version;
-    protected Status status;
-    protected List<Actividad> listaActividades;
-    protected Profesor creador;
-    protected float rating;
-    protected List<Estudiante> estudiantesInscritos;
-    protected float progreso;
-    protected List<Actividad> listaActividadesCompletadasConDup;
-    protected List<Actividad> listaActividadesCompletadas;
+    protected String titulo; // Titulo del Learning Path
+    protected Nivel nivelDificultad; // Nivel de dificultad del Learning Path
+    protected String descripcion;   // Descripcion del Learning Path
+    protected String objetivos; // Objetivos del Learning Path
+    protected int duracionMinutos; // Duracion en minutos del Learning Path
+    protected LocalDateTime fechaCreacion; // Fecha de creacion del Learning Path
+    protected LocalDateTime fechaModificacion; // Fecha de modificacion del Learning Path
+    protected int version; // Version del Learning Path
+    protected Status status; // Status del Learning Path
+    protected List<Actividad> listaActividades; // Lista de actividades del Learning Path
+    protected Profesor creador; // Creador del Learning Path
+    protected float rating; // Rating del Learning Path
+    protected List<Estudiante> estudiantesInscritos; // Lista de estudiantes inscritos en el Learning Path
+    protected float progreso; // Progreso del Learning Path
+    protected List<Actividad> listaActividadesCompletadasConDup; // Lista de actividades completadas con duplicados
+    protected List<Actividad> listaActividadesCompletadas; // Lista de actividades completadas sin duplicados
     
 
     public LearningPath (String titulo, Nivel nivelDificultad, String descripcion, String objetivos, int duracionMinutos, Profesor creador, float rating, List<Actividad> listaActividades){
 
-        this.titulo=titulo;
+        this.titulo=titulo; 
         this.nivelDificultad=nivelDificultad;
         this.descripcion=descripcion;
         this.objetivos= objetivos;
@@ -41,7 +41,7 @@ public class LearningPath {
         this.fechaModificacion=null;
         this.version=1;
         this.status=Status.Incompleto;
-        this.listaActividades = new ArrayList<>();
+        this.listaActividades = listaActividades;
         this.creador=creador;
         this.rating = rating;
         this.estudiantesInscritos = new ArrayList<>();
@@ -50,102 +50,102 @@ public class LearningPath {
         this.listaActividadesCompletadas = new ArrayList<>();
     }
 
-
-    public String getTitulo() {
+    // Getters y Setters
+    public String getTitulo() { // Obtener el titulo del Learning Path
         return titulo;
     }
 
 
-    public void setTitulo(String titulo) {
+    public void setTitulo(String titulo) { // Establecer el titulo del Learning Path
         this.titulo = titulo;
     }
 
 
-    public Nivel getNivelDificultad() {
+    public Nivel getNivelDificultad() { // Obtener el nivel de dificultad del Learning Path
         return nivelDificultad;
     }
 
 
-    public void setNivelDificultad(Nivel nivelDificultad) {
+    public void setNivelDificultad(Nivel nivelDificultad) { // Establecer el nivel de dificultad del Learning Path
         this.nivelDificultad = nivelDificultad;
     }
 
 
-    public String getDescripcion() {
+    public String getDescripcion() { // Obtener la descripcion del Learning Path
         return descripcion;
     }
 
 
-    public void setDescripcion(String descripcion) {
+    public void setDescripcion(String descripcion) { // Establecer la descripcion del Learning Path
         this.descripcion = descripcion;
     }
 
 
-    public String getObjetivos() {
+    public String getObjetivos() { // Obtener los objetivos del Learning Path
         return objetivos;
     }
 
 
-    public void setObjetivos(String objetivos) {
+    public void setObjetivos(String objetivos) { // Establecer los objetivos del Learning Path
         this.objetivos = objetivos;
     }
 
 
-    public int getDuracionMinutos() {
+    public int getDuracionMinutos() { // Obtener la duracion en minutos del Learning Path
         return duracionMinutos;
     }
 
 
-    public void setDuracionMinutos(int duracionMinutos) {
+    public void setDuracionMinutos(int duracionMinutos) { // Establecer la duracion en minutos del Learning Path
         this.duracionMinutos = duracionMinutos;
     }
 
 
-    public LocalDateTime getFechaCreacion() {
+    public LocalDateTime getFechaCreacion() { // Obtener la fecha de creacion del Learning Path
         return fechaCreacion;
     }
 
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { // Establecer la fecha de creacion del Learning Path
         this.fechaCreacion = fechaCreacion;
     }
 
 
-    public LocalDateTime getFechaModificacion() {
+    public LocalDateTime getFechaModificacion() { // Obtener la fecha de modificacion del Learning Path
         return fechaModificacion;
     }
 
 
-    public void setFechaModificacion(LocalDateTime fechaModificacion) {
+    public void setFechaModificacion(LocalDateTime fechaModificacion) { // Establecer la fecha de modificacion del Learning Path
         this.fechaModificacion = fechaModificacion;
     }
 
 
-    public int getVersion() {
+    public int getVersion() { // Obtener la version del Learning Path
         return version;
     }
 
 
-    public void setVersion() {
+    public void setVersion() { // Establecer la version del Learning Path
         this.version +=1;
     }
 
 
-    public Status getStatus() {
+    public Status getStatus() { // Obtener el status del Learning Path
         return status;
     }
 
 
-    public void setStatus(Status status) {
+    public void setStatus(Status status) { // Establecer el status del Learning Path
         this.status = status;
     }
 
 
-    public List<Actividad> getListaActividades() {
+    public List<Actividad> getListaActividades() { // Obtener la lista de actividades del Learning Path
         return listaActividades;
     }
 
-    public void agregarActividad(Actividad actividad) {
+    public void agregarActividad(Actividad actividad) { // Agregar una actividad a la lista de actividades del Learning Path
         if (listaActividades.contains(actividad)) {
             throw new IllegalArgumentException("La actividad ya está en la lista de actividades del Learning Path.");
         } else {
@@ -155,7 +155,7 @@ public class LearningPath {
         }
     }
 
-    public void eliminarActividad(Actividad actividad) {
+    public void eliminarActividad(Actividad actividad) { // Eliminar una actividad de la lista de actividades del Learning Path 
         if (!listaActividades.contains(actividad)) {
             throw new IllegalArgumentException("La actividad no está en la lista de actividades del Learning Path.");
         } 
@@ -171,16 +171,16 @@ public class LearningPath {
     }
 
 
-    public boolean tieneActividadObligatoria() {
+    public boolean tieneActividadObligatoria() { // Verificar si el Learning Path tiene al menos una actividad obligatoria
         return listaActividades.stream().anyMatch(actividad -> actividad.esObligatoria());
     }
 
     public void validarActividadesObligatorias() {
-        if (listaActividades.stream().noneMatch(Actividad::esObligatoria)) {
+        if (listaActividades.stream().noneMatch(Actividad::esObligatoria)) { // Verificar si el Learning Path tiene al menos una actividad obligatoria
             throw new IllegalStateException("El Learning Path debe contener al menos una actividad obligatoria.");
         }
     }
-    public void registrarLearningPath() {
+    public void registrarLearningPath() { 
         validarActividadesObligatorias();
         System.out.println("Learning Path validado y listo para su uso.");
     } // registrarLearningPath se debe utilizar cada vez que se cree un learning path de manera que se garantice que haya al menos una actividad obligatoria
@@ -241,25 +241,26 @@ public class LearningPath {
     }
     
 
-    public float getRating(){
+    public float getRating(){ // Obtener el rating del Learning Path
         return rating;
     }
 
-    public void setRating(float rating){
+    public void setRating(float rating){ // Establecer el rating del Learning Path
         this.rating = rating;
     }
     
-    public List<Estudiante> getEstudiantesInscritos(){
+    public List<Estudiante> getEstudiantesInscritos(){ // Obtener la lista de estudiantes inscritos en el Learning Path
         return estudiantesInscritos;
     }
 
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME; // Formato de fecha y hora para persistencia
-    
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSSSSSSSS]");
+
     // Persistencia de LearningPath en archivos de texto plano
 
+    
     public void guardarEnArchivo (File archivo) throws IOException{ // Guardar LearningPath en archivo de texto plano
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, true))){ // Crear un BufferedWriter para escribir en el archivo, BufferedWriter es una clase que permite escribir texto en un archivo de texto plano y se diferencia de FileWriter en que BufferedWriter es más eficiente para escribir grandes cantidades de texto como en este caso
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, false))){ // Crear un BufferedWriter para escribir en el archivo, BufferedWriter es una clase que permite escribir texto en un archivo de texto plano y se diferencia de FileWriter en que BufferedWriter es más eficiente para escribir grandes cantidades de texto como en este caso
             // Guardar atributos basicos
             writer.write(this.titulo + ","+ // Escribir el titulo del LearningPath
             this.nivelDificultad + ","+ // Escribir el nivel de dificultad del LearningPath
@@ -303,6 +304,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     if (actividad instanceof Tarea)
     {
         Tarea tarea = (Tarea) actividad;
+        String obligatoria = tarea.esObligatoria() ? "SI" : "NO";
         writer.write("Tarea"+ actividad.getDescripcion()+","+ 
         tarea.getNivelDificultad()+","+ 
         tarea.getObjetivo()+","+ 
@@ -311,7 +313,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (tarea.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+ 
         (tarea.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         tarea.getStatus()+","+ 
-        tarea.esObligatoria()+","+ 
+        obligatoria+","+ 
         tarea.getTipo()+","+
         tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -403,13 +405,14 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
 
 
     // Método principal para cargar el LearningPath
-    public static LearningPath cargarDeArchivo(File archivo, Profesor creador) throws IOException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    public static LearningPath cargarDeArchivo(File archivo, Profesor creador) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea = reader.readLine();
             if (linea != null) {
                 String[] datos = linea.split(",");
+                
+                // Leer atributos en el mismo orden en que se guardaron
                 String titulo = datos[0];
                 Nivel nivelDificultad = Nivel.valueOf(datos[1]);
                 String descripcion = datos[2];
@@ -420,8 +423,10 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
                 int version = Integer.parseInt(datos[7]);
                 Status status = Status.valueOf(datos[8]);
                 float rating = Float.parseFloat(datos[9]);
-                float progreso = Float.parseFloat(datos[10]);
+                String nombreCreador = datos[10];
+                float progreso = Float.parseFloat(datos[11]);
 
+                // Crear el LearningPath con los valores cargados
                 LearningPath learningPath = new LearningPath(titulo, nivelDificultad, descripcion, objetivos, duracionMinutos, creador, rating, new ArrayList<>());
                 learningPath.fechaCreacion = fechaCreacion;
                 learningPath.fechaModificacion = fechaModificacion;
@@ -429,29 +434,48 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
                 learningPath.status = status;
                 learningPath.progreso = progreso;
 
-                // Listas para guardar las actividades durante la carga
-                List<Actividad> currentList = learningPath.listaActividades;
+                System.out.println("Learning Path cargado correctamente. Título: " + titulo);
 
+                // Leer y cargar las listas adicionales
                 while ((linea = reader.readLine()) != null) {
-                    if (linea.equals("COMPLETADAS_CON_DUP:")) {
-                        currentList = learningPath.listaActividadesCompletadasConDup;
-                        continue;
+                    if (linea.equals("ACTIVIDADES:")) {
+                        System.out.println("Cargando ACTIVIDADES...");
+                        while ((linea = reader.readLine()) != null && !linea.equals("COMPLETADAS_CON_DUP:")) {
+                            Actividad actividad = cargarActividad(linea, creador, formatter);
+                            if (actividad != null) {
+                                learningPath.listaActividades.add(actividad);
+                                System.out.println("Actividad cargada: " + actividad.getDescripcion());
+                            }
+                        }
+                    } else if (linea.equals("COMPLETADAS_CON_DUP:")) {
+                        System.out.println("Cargando COMPLETADAS_CON_DUP...");
+                        while ((linea = reader.readLine()) != null && !linea.equals("COMPLETADAS_SIN_DUP:")) {
+                            Actividad actividad = cargarActividad(linea, creador, formatter);
+                            if (actividad != null) {
+                                learningPath.listaActividadesCompletadasConDup.add(actividad);
+                                System.out.println("Actividad completada (con duplicado) cargada: " + actividad.getDescripcion());
+                            }
+                        }
                     } else if (linea.equals("COMPLETADAS_SIN_DUP:")) {
-                        currentList = learningPath.listaActividadesCompletadas;
-                        continue;
-                    }
-
-                    // Cargar la actividad utilizando el método auxiliar
-                    Actividad actividad = cargarActividad(linea, creador, formatter);
-                    if (actividad != null) {
-                        currentList.add(actividad);
+                        System.out.println("Cargando COMPLETADAS_SIN_DUP...");
+                        while ((linea = reader.readLine()) != null) {
+                            Actividad actividad = cargarActividad(linea, creador, formatter);
+                            if (actividad != null) {
+                                learningPath.listaActividadesCompletadas.add(actividad);
+                                System.out.println("Actividad completada (sin duplicado) cargada: " + actividad.getDescripcion());
+                            }
+                        }
                     }
                 }
+
                 return learningPath;
             }
         }
         return null;
     }
+
+    
+    
 
     // Método auxiliar para determinar el tipo de actividad y cargarla
     private static Actividad cargarActividad(String linea, Profesor creador, DateTimeFormatter formatter) {

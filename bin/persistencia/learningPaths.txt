@@ -1,0 +1,5 @@
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:34:06.688535000,2024-10-31T04:34:06.689067000,3,Incompleto,4.5,Juan,0.0
+TareaTarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:34:06.688857000,2024-10-31T04:34:06.688997000,Incompleto,SI,tarea,,,LMS,Juan
+QuizQuiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:34:06.689047000,2024-10-31T04:34:06.689053000,Incompleto,false,quiz,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
