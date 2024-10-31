@@ -1,5 +1,6 @@
 package LPRS;
 import actividad.*;
+import pregunta.Opcion;
 import pregunta.Pregunta;
 import pregunta.PreguntaAbierta;
 import pregunta.PreguntaCerrada;
@@ -318,7 +319,6 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (tarea.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         tarea.getStatus()+","+ 
         (tarea.esObligatoria()? "SI" : "NO")+","+ 
-        tarea.getTipo()+","+
         tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         tarea.getSubmissionMethod()+","+ 
@@ -337,7 +337,6 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (quiz.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         quiz.getStatus()+","+
         (quiz.esObligatoria()? "SI" : "NO")+","+
-        quiz.getTipo()+","+
         quiz.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         quiz.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         quiz.getListaPreguntas().stream().map(Pregunta::getEnunciado).collect(Collectors.joining(","))+","+
@@ -484,6 +483,10 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     // Método auxiliar para determinar el tipo de actividad y cargarla
     private static Actividad cargarActividad(String linea, Profesor creador, DateTimeFormatter formatter) {
         String[] datos = linea.split(",");
+        System.out.println("Datos desglosados para la línea: " + linea);
+        for (int i = 0; i < datos.length; i++) {
+            System.out.println("datos[" + i + "]: " + datos[i]);
+        }
         String tipoActividad = datos[0];
 
         switch (tipoActividad) {
@@ -515,9 +518,10 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
-        String submissionMethod = datos[10];
-        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[11], creador, formatter);
-        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[12], creador, formatter);
+        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
+        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
+        String submissionMethod = datos[12];
+        String nombreCreador = datos[13]; // No se usa en la creación de la tarea porque ya se tiene el profesor
 
        // Crear la tarea con los datos cargados
         Tarea tarea = new Tarea(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
@@ -538,17 +542,21 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
-        double calificacionMinima = Double.parseDouble(datos[10]);
-        double calificacionObtenida = Double.parseDouble(datos[11]);
-        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[12], creador, formatter);
-        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[13], creador, formatter);
+        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
+        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
+        List<PreguntaCerrada> listaPreguntas = cargarPreguntasCerradas(datos[12]);
+        double calificacionMinima = Double.parseDouble(datos[13]);
+        double calificacionObtenida = Double.parseDouble(datos[14]);
+        String nombreCreador = datos[15]; // No se usa en la creación del quiz porque ya se tiene el profesor
 
-        Quiz quiz= new Quiz(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, new ArrayList<>(), calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        Quiz quiz= new Quiz(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         
         // Asignar los valores que no entran al constructor directamente como calificacion obtenida y fehca de inicio
         
         quiz.setFechaInicio(fechaInicio);
         quiz.setCalificacionObtenida(calificacionObtenida);
+        quiz.setListaPreguntas(listaPreguntas);
+
 
         return quiz;
     }
@@ -654,6 +662,72 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         return actividades;
     }
 
+    // Método auxiliar para cargar las preguntas de un quiz o examen
+
+    // Método para cargar una lista de preguntas cerradas a partir de una cadena de texto
+    public static List<PreguntaCerrada> cargarPreguntasCerradas(String preguntasStr) {
+        List<PreguntaCerrada> listaPreguntas = new ArrayList<>();
+
+        if (preguntasStr == null || preguntasStr.isEmpty()) {
+            return listaPreguntas; // Retorna una lista vacía si no hay preguntas
+        }
+
+        // Divide cada pregunta usando ';'
+        String[] preguntasData = preguntasStr.split(";");
+        for (String preguntaStr : preguntasData) {
+            // Divide cada componente de la pregunta usando '|'
+            String[] partesPregunta = preguntaStr.split("\\|");
+
+            // El primer elemento es el enunciado de la pregunta
+            String enunciado = partesPregunta[0];
+
+            // Crear una nueva pregunta cerrada con el enunciado
+            PreguntaCerrada pregunta = new PreguntaCerrada(enunciado);
+
+            // Diccionarios para almacenar las opciones
+            Dictionary<Opcion, String> opcionA = new Hashtable<>();
+            Dictionary<Opcion, String> opcionB = new Hashtable<>();
+            Dictionary<Opcion, String> opcionC = new Hashtable<>();
+            Dictionary<Opcion, String> opcionD = new Hashtable<>();
+            Dictionary<Opcion, String> respuestaCorrecta = new Hashtable<>();
+
+            // Iterar sobre las partes de la pregunta para asignar opciones y respuesta
+            for (int i = 1; i < partesPregunta.length; i++) {
+                String parte = partesPregunta[i];
+
+                if (parte.startsWith("A:")) {
+                    opcionA.put(Opcion.A, parte.substring(2));
+                    pregunta.setOpcionA(opcionA);
+                } else if (parte.startsWith("B:")) {
+                    opcionB.put(Opcion.B, parte.substring(2));
+                    pregunta.setOpcionB(opcionB);
+                } else if (parte.startsWith("C:")) {
+                    opcionC.put(Opcion.C, parte.substring(2));
+                    pregunta.setOpcionC(opcionC);
+                } else if (parte.startsWith("D:")) {
+                    opcionD.put(Opcion.D, parte.substring(2));
+                    pregunta.setOpcionD(opcionD);
+                } else if (parte.startsWith("Respuesta:")) {
+                    String respuesta = parte.substring(10);
+                    if (respuesta.equals("A")) {
+                        respuestaCorrecta.put(Opcion.A, opcionA.get(Opcion.A));
+                    } else if (respuesta.equals("B")) {
+                        respuestaCorrecta.put(Opcion.B, opcionB.get(Opcion.B));
+                    } else if (respuesta.equals("C")) {
+                        respuestaCorrecta.put(Opcion.C, opcionC.get(Opcion.C));
+                    } else if (respuesta.equals("D")) {
+                        respuestaCorrecta.put(Opcion.D, opcionD.get(Opcion.D));
+                    }
+                    pregunta.setRespuesta(respuestaCorrecta);
+                }
+            }
+
+            // Añadir la pregunta configurada a la lista
+            listaPreguntas.add(pregunta);
+        }
+
+        return listaPreguntas; // Retorna la lista de preguntas cerradas
+    }
 
 }
 
