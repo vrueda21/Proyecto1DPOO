@@ -1,5 +1,28 @@
-Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:34:06.688535000,2024-10-31T04:34:06.689067000,3,Incompleto,4.5,Juan,0.0
-TareaTarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:34:06.688857000,2024-10-31T04:34:06.688997000,Incompleto,SI,tarea,,,LMS,Juan
-QuizQuiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:34:06.689047000,2024-10-31T04:34:06.689053000,Incompleto,false,quiz,,,,60.0,0.0,Juan
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:43:05.376351000,2024-10-31T04:43:05.376890000,3,Incompleto,4.5,Juan,0.0
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:43:05.376687000,2024-10-31T04:43:05.376820000,Incompleto,true,tarea,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:43:05.376869000,2024-10-31T04:43:05.376876000,Incompleto,false,quiz,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:43:16.848187000,2024-10-31T04:43:16.848819000,3,Incompleto,4.5,Juan,0.0
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:43:16.848609000,2024-10-31T04:43:16.848745000,Incompleto,true,tarea,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:43:16.848796000,2024-10-31T04:43:16.848803000,Incompleto,false,quiz,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:45:19.996867000,2024-10-31T04:45:19.997368000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:45:19.997171000,2024-10-31T04:45:19.997299000,Incompleto,true,tarea,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:45:19.997348000,2024-10-31T04:45:19.997355000,Incompleto,false,quiz,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:47:40.425261000,2024-10-31T04:47:40.425886000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:47:40.425665000,2024-10-31T04:47:40.425813000,Incompleto,SI,tarea,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:47:40.425864000,2024-10-31T04:47:40.425871000,Incompleto,NO,quiz,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T04:50:15.116689000,2024-10-31T04:50:15.117209000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T04:50:15.117007000,2024-10-31T04:50:15.117139000,Incompleto,SI,tarea,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T04:50:15.117188000,2024-10-31T04:50:15.117195000,Incompleto,NO,quiz,,,,60.0,0.0,Juan
 COMPLETADAS_CON_DUP:
 COMPLETADAS_SIN_DUP:

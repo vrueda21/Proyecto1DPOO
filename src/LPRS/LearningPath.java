@@ -259,43 +259,48 @@ public class LearningPath {
     // Persistencia de LearningPath en archivos de texto plano
 
     
-    public void guardarEnArchivo (File archivo) throws IOException{ // Guardar LearningPath en archivo de texto plano
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, false))){ // Crear un BufferedWriter para escribir en el archivo, BufferedWriter es una clase que permite escribir texto en un archivo de texto plano y se diferencia de FileWriter en que BufferedWriter es más eficiente para escribir grandes cantidades de texto como en este caso
-            // Guardar atributos basicos
-            writer.write(this.titulo + ","+ // Escribir el titulo del LearningPath
-            this.nivelDificultad + ","+ // Escribir el nivel de dificultad del LearningPath
-            this.descripcion + ","+ // Escribir la descripcion del LearningPath
-            this.objetivos + ","+ // Escribir los objetivos del LearningPath
-            this.duracionMinutos + ","+ // Escribir la duracion en minutos del LearningPath
-            (this.fechaCreacion != null ? this.fechaCreacion.format(formatter):"")+","+ // Escribir la fecha de creacion del LearningPath
-            (this.fechaModificacion != null ? this.fechaModificacion.format(formatter):"")+","+ // Escribir la fecha de modificacion del LearningPath
-            this.version + ","+ // Escribir la version del LearningPath
-            this.status + ","+ // Escribir el status del LearningPath
-            this.rating + ","+ // Escribir el rating del LearningPath
-            this.creador.getNombre() + ","+ // Escribir el nombre del creador del LearningPath
-            this.progreso); // Escribir el progreso del LearningPath
-        writer.newLine(); // Salto de linea
-
-        // Guardar cada actividad en la lista de actividades del LearningPath
-        for (Actividad actividad : listaActividades) {
-            guardarActividad(actividad, writer);
-        }
-        
-        // Guardar listaActividadesCompletadasConDup
-        writer.write("COMPLETADAS_CON_DUP:");
-        writer.newLine();
-        for (Actividad actividad : listaActividadesCompletadasConDup) {
-            guardarActividad(actividad, writer);
-        }
-
-        // Guardar listaActividadesCompletadas (sin duplicados)
-        writer.write("COMPLETADAS_SIN_DUP:");
-        writer.newLine();
-        for (Actividad actividad : listaActividadesCompletadas) {
-            guardarActividad(actividad, writer);
+    public void guardarEnArchivo(File archivo) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, true))) {
+            // Guardar atributos básicos del LearningPath
+            writer.write(this.titulo + "," +
+                         this.nivelDificultad + "," +
+                         this.descripcion + "," +
+                         this.objetivos + "," +
+                         this.duracionMinutos + "," +
+                         (this.fechaCreacion != null ? this.fechaCreacion.format(formatter) : "") + "," +
+                         (this.fechaModificacion != null ? this.fechaModificacion.format(formatter) : "") + "," +
+                         this.version + "," +
+                         this.status + "," +
+                         this.rating + "," +
+                         this.creador.getNombre() + "," +
+                         this.progreso);
+            writer.newLine();
+    
+            
+            writer.write("ACTIVIDADES:");
+            writer.newLine();
+    
+            // Guardar cada actividad en la lista de actividades del LearningPath
+            for (Actividad actividad : listaActividades) {
+                guardarActividad(actividad, writer);
+            }
+    
+            // Guardar lista de actividades completadas con duplicados
+            writer.write("COMPLETADAS_CON_DUP:");
+            writer.newLine();
+            for (Actividad actividad : listaActividadesCompletadasConDup) {
+                guardarActividad(actividad, writer);
+            }
+    
+            // Guardar lista de actividades completadas sin duplicados
+            writer.write("COMPLETADAS_SIN_DUP:");
+            writer.newLine();
+            for (Actividad actividad : listaActividadesCompletadas) {
+                guardarActividad(actividad, writer);
+            }
         }
     }
-}
+    
 
 // Metodo auxiliar guardar actividades 
 
@@ -304,8 +309,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     if (actividad instanceof Tarea)
     {
         Tarea tarea = (Tarea) actividad;
-        String obligatoria = tarea.esObligatoria() ? "SI" : "NO";
-        writer.write("Tarea"+ actividad.getDescripcion()+","+ 
+        writer.write("Tarea,"+ actividad.getDescripcion()+","+ 
         tarea.getNivelDificultad()+","+ 
         tarea.getObjetivo()+","+ 
         tarea.getDuracionEsperada()+","+ 
@@ -313,7 +317,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (tarea.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+ 
         (tarea.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         tarea.getStatus()+","+ 
-        obligatoria+","+ 
+        (tarea.esObligatoria()? "SI" : "NO")+","+ 
         tarea.getTipo()+","+
         tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -324,7 +328,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     {
         Quiz quiz = (Quiz) actividad;   
 
-        writer.write("Quiz"+ actividad.getDescripcion()+","+
+        writer.write("Quiz,"+ actividad.getDescripcion()+","+
         quiz.getNivelDificultad()+","+
         quiz.getObjetivo()+","+
         quiz.getDuracionEsperada()+","+
@@ -332,7 +336,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (quiz.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (quiz.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         quiz.getStatus()+","+
-        quiz.esObligatoria()+","+
+        (quiz.esObligatoria()? "SI" : "NO")+","+
         quiz.getTipo()+","+
         quiz.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         quiz.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -344,7 +348,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     else if (actividad instanceof RecursoEducativo)
     {
         RecursoEducativo recurso = (RecursoEducativo) actividad;
-        writer.write("Recurso"+ actividad.getDescripcion()+","+
+        writer.write("Recurso,"+ actividad.getDescripcion()+","+
         recurso.getNivelDificultad()+","+
         recurso.getObjetivo()+","+
         recurso.getDuracionEsperada()+","+
@@ -352,7 +356,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (recurso.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (recurso.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         recurso.getStatus()+","+
-        recurso.esObligatoria()+","+
+        (recurso.esObligatoria()? "SI" : "NO")+","+
         recurso.getTipo()+","+
         recurso.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         recurso.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -362,7 +366,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     else if (actividad instanceof Examen)
     {
         Examen examen = (Examen) actividad;
-        writer.write("Examen"+ actividad.getDescripcion()+","+
+        writer.write("Examen,"+ actividad.getDescripcion()+","+
         examen.getNivelDificultad()+","+
         examen.getObjetivo()+","+
         examen.getDuracionEsperada()+","+
@@ -370,7 +374,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (examen.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (examen.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         examen.getStatus()+","+
-        examen.esObligatoria()+","+
+        (examen.esObligatoria()? "SI" : "NO")+","+
         examen.getTipo()+","+
         examen.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         examen.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -384,7 +388,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     else if (actividad instanceof Encuesta)
     {
         Encuesta encuesta = (Encuesta) actividad;
-        writer.write("Encuesta"+ actividad.getDescripcion()+","+
+        writer.write("Encuesta,"+ actividad.getDescripcion()+","+
         encuesta.getNivelDificultad()+","+
         encuesta.getObjetivo()+","+
         encuesta.getDuracionEsperada()+","+
@@ -392,7 +396,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (encuesta.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (encuesta.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         encuesta.getStatus()+","+
-        encuesta.esObligatoria()+","+
+        (encuesta.esObligatoria()? "SI" : "NO")+","+
         encuesta.getTipo()+","+
         encuesta.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         encuesta.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -404,8 +408,8 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
 }
 
 
-    // Método principal para cargar el LearningPath
 
+    // Método principal para cargar el LearningPath
     public static LearningPath cargarDeArchivo(File archivo, Profesor creador) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea = reader.readLine();
@@ -510,7 +514,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
-        Obligatoria obligatoria = Obligatoria.valueOf(datos[9]);
+        Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         String submissionMethod = datos[10];
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[11], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[12], creador, formatter);
@@ -533,7 +537,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
-        Obligatoria obligatoria = Obligatoria.valueOf(datos[9]);
+        Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         double calificacionMinima = Double.parseDouble(datos[10]);
         double calificacionObtenida = Double.parseDouble(datos[11]);
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[12], creador, formatter);
@@ -558,7 +562,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
-        Obligatoria obligatoria = Obligatoria.valueOf(datos[9]);
+        Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         String tipoRecurso = datos[10];
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[11], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[12], creador, formatter);
@@ -584,7 +588,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
-        Obligatoria obligatoria = Obligatoria.valueOf(datos[9]);
+        Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         double calificacionMinima = Double.parseDouble(datos[10]);
         int respuestasCorrectas = Integer.parseInt(datos[11]);
         double calificacionObtenida = Double.parseDouble(datos[12]);
@@ -613,7 +617,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
-        Obligatoria obligatoria = Obligatoria.valueOf(datos[9]);
+        Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
         ArrayList<PreguntaAbierta> listaPreguntas = new ArrayList<>();
