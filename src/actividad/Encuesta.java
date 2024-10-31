@@ -6,17 +6,24 @@ import usuario.Profesor;
 import LPRS.LearningPath;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Encuesta extends Actividad {
 
     private ArrayList<PreguntaAbierta> listaPreguntas; // Lista de preguntas abiertas de la encuesta
 
     public Encuesta(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
-                    double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
+                    double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, List<Actividad>actividadesPreviasSugeridas, List<Actividad>actividadesSeguimientoRecomendadas,
                     Profesor creador, ArrayList<PreguntaAbierta> listaPreguntas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, "encuesta", creador, null, null);
+              fechaLimite, status, obligatoria, "encuesta", creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
+    }
+
+    // Getters
+
+    public ArrayList<PreguntaAbierta> getListaPreguntas() {
+        return listaPreguntas;
     }
 
     // Método para responder la encuesta por un estudiante

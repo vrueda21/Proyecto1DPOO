@@ -106,10 +106,18 @@ public abstract class Actividad {
         return tipo;
     }
 
+
+    public List<Actividad> getActividadesSeguimientoRecomendadas() {
+        return actividadesSeguimientoRecomendadas;
+    }
+
+    public List<Actividad> getActividadesPreviasSugeridas() {
+        return actividadesPreviasSugeridas;
+    }
+
     public Profesor getCreador() {
         return creador;
     }
-
     // Metodos
 
 
@@ -156,10 +164,6 @@ public abstract class Actividad {
         }
     }
 
-
-    public List<Actividad> getActividadesPreviasSugeridas() {
-        return actividadesPreviasSugeridas;
-    }
 
     public void eliminarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
         if (learningPath.verificarSiHayInscritos()) {
@@ -257,10 +261,8 @@ public abstract class Actividad {
         this.obligatoria = obligatoria;
     }
 
-    public void setFechaInicio(LocalDateTime fechaInicio, LearningPath learningPath) {
-        if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se puede modificar la fecha de inicio si hay estudiantes inscritos en el Learning Path.");
-        }
+    public void setFechaInicio(LocalDateTime fechaInicio) {
+        // Este método no verifica si hay estudiantes inscritos, ya que la fecha de inicio no debería cambiar una vez que se ha creado la actividad. Solo se usara por la persistencia de datos y no por los profesores o administradores.
         this.fechaInicio = fechaInicio;
     }
 

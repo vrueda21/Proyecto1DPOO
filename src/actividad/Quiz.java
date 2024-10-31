@@ -26,6 +26,37 @@ public class Quiz extends Actividad {
         this.calificacionObtenida = 0.0;
     }
 
+    // Getters 
+
+    public List<PreguntaCerrada> getListaPreguntas() {
+        return listaPreguntas;
+    }
+
+    public double getCalificacionMinima() {
+        return calificacionMinima;
+    }
+
+    public double getCalificacionObtenida() {
+        return calificacionObtenida;
+    }
+
+    // Setters que solo pueden ser usados por profesores, administradores, o por la persistencia de datos.
+
+    public void setListaPreguntas(List<PreguntaCerrada> listaPreguntas) {
+        this.listaPreguntas = listaPreguntas;
+    }
+
+    public void setCalificacionMinima(double calificacionMinima) {
+        this.calificacionMinima = calificacionMinima;
+    }
+
+    public void setCalificacionObtenida(double calificacionObtenida) {
+        this.calificacionObtenida = calificacionObtenida;
+    }
+
+    
+
+    
     // Método para responder al quiz completo
     @Override
     public void responder(Estudiante estudiante, String respuesta) {

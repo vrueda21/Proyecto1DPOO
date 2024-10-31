@@ -35,6 +35,48 @@ public class Examen extends Actividad
         this.respuestasAbiertas = new ArrayList<>();
     }
 
+    // Getters
+    public List<Pregunta> getListaPreguntas() {
+        return listaPreguntas;
+    }
+
+    public double getCalificacionMinima() {
+        return calificacionMinima;
+    }
+
+    public double getCalificacionObtenida() {
+        return calificacionObtenida;
+    }
+
+    public int getRespuestasCorrectas() {
+        return respuestasCorrectas;
+    }
+
+    public List<String> getRespuestasAbiertas() {
+        return respuestasAbiertas;
+    }
+
+    // Setters
+
+    public void setListaPreguntas(List<Pregunta> listaPreguntas) {
+        this.listaPreguntas = listaPreguntas;
+    }
+
+    public void setCalificacionMinima(double calificacionMinima) {
+        this.calificacionMinima = calificacionMinima;
+    }
+
+    public void setCalificacionObtenida(double calificacionObtenida) {
+        this.calificacionObtenida = calificacionObtenida;
+    }
+
+    public void setRespuestasCorrectas(int respuestasCorrectas) {
+        this.respuestasCorrectas = respuestasCorrectas;
+    }
+
+    public void setRespuestasAbiertas(List<String> respuestasAbiertas) {
+        this.respuestasAbiertas = respuestasAbiertas;
+    }
     // Metodo para que el estudiante responda el examen
 
     @Override
