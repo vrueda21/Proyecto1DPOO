@@ -78,4 +78,29 @@ public class Encuesta extends Actividad {
         // No se necesita implementación para Encuesta
         throw new UnsupportedOperationException("Las encuestas no se pueden reintentar.");
     }
+
+    // Crear y agregar una pregunta a la encuesta
+
+    public void agregarPregunta(PreguntaAbierta pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        listaPreguntas.add(pregunta);
+    }
+
+    // Método para eliminar una pregunta de la encuesta
+
+    public void eliminarPregunta(PreguntaAbierta pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        // Si la cantidad de preguntas es 0 o 1, no se puede eliminar más porque teiene que haber al menos una pregunta
+        if (listaPreguntas.size() <= 1) {
+            throw new UnsupportedOperationException("La encuesta debe tener al menos una pregunta.");
+        }
+
+        listaPreguntas.remove(pregunta);
+    }
 }

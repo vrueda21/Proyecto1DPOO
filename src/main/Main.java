@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         
         // Crear un profesor
-        Profesor profesor = new Profesor("Juan", "1234", "juan@example.com");
+        Profesor profesor = new Profesor("Juan", "1234", "juan@example.com", new ArrayList<>(), new ArrayList<>());
         
         // Crear un LearningPath
         LearningPath learningPath = new LearningPath(
@@ -29,6 +29,9 @@ public class Main {
             new ArrayList<>()
         );
 
+        // Agregar el LearningPath al profesor
+        profesor.getLearningPathCreado().add(learningPath);
+
         // Crear estudiantes
         Estudiante estudiante1 = new Estudiante("Maria", "1234", "maria@example.com");
         Estudiante estudiante2 = new Estudiante("Carlos", "5678", "carlos@example.com");
@@ -36,6 +39,10 @@ public class Main {
         // Inscribir estudiantes en el LearningPath
         learningPath.inscripcionEstudiante(estudiante1);
         learningPath.inscripcionEstudiante(estudiante2);
+
+        // Verificar que los estudiantes estén inscritos y agregarlos a la lista de estudiantes del profesor
+        profesor.agregarEstudianteSiCorresponde(learningPath, estudiante1, profesor);
+        profesor.agregarEstudianteSiCorresponde(learningPath, estudiante2, profesor);
         
         // Crear una Tarea y agregarla al LearningPath
         Tarea tarea = new Tarea(
@@ -101,6 +108,17 @@ public class Main {
             new ArrayList<>()
         );
         learningPath.agregarActividad(recurso);
+
+        // Imprimir detalles del LearningPath
+
+        System.out.println("\n== Detalles del Learning Path ==");
+        System.out.println("Título: " + learningPath.getTitulo());
+        System.out.println("Estudiantes Inscritos: " + learningPath.getEstudiantesInscritos().size());
+        System.out.println("Actividades en el Learning Path: " + learningPath.getListaActividades().size());
+        System.out.println("Progreso del Estudiante 1: " + learningPath.calcularProgreso(estudiante1) + "%");
+        System.out.println("Progreso del Estudiante 2: " + learningPath.calcularProgreso(estudiante2) + "%");
+
+
 
         // Responder actividades por parte del estudiante 1
         System.out.println("\n== Simulación de Respuestas de Estudiante 1 ==");

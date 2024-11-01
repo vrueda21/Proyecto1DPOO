@@ -201,6 +201,31 @@ public class Examen extends Actividad
         respuestasAbiertas.clear();
         this.status = Status.Incompleto;
         System.out.println("El examen ha sido reiniciado por: " + estudiante.getNombre());
-    }    
+    }   
+
+    // Método para agregar una pregunta al examen
+
+    public void agregarPregunta(Pregunta pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        listaPreguntas.add(pregunta);
+    }
+
+    // Método para eliminar una pregunta del examen
+
+    public void eliminarPregunta(Pregunta pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        // Si la cantidad de preguntas es 0 o 1, no se puede eliminar más porque teiene que haber al menos una pregunta
+        if (listaPreguntas.size() <= 1) {
+            throw new UnsupportedOperationException("El examen debe tener al menos una pregunta.");
+        }
+
+        listaPreguntas.remove(pregunta);
+    }
 
 }

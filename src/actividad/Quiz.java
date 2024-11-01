@@ -150,4 +150,28 @@ public class Quiz extends Actividad {
         System.out.println("El profesor " + profesor.getNombre() + " no puede evaluar el quiz.");
     }
 
+    // Método para agregar una pregunta al quiz
+
+    public void agregarPregunta(PreguntaCerrada pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        listaPreguntas.add(pregunta);
+    }
+
+    // Método para eliminar una pregunta del quiz
+
+    public void eliminarPregunta(PreguntaCerrada pregunta) {
+        if (pregunta == null) {
+            throw new IllegalArgumentException("La pregunta no puede ser nula.");
+        }
+
+        // Si la cantidad de preguntas es 0 o 1, no se puede eliminar más porque teiene que haber al menos una pregunta
+        if (listaPreguntas.size() <= 1) {
+            throw new UnsupportedOperationException("El quiz debe tener al menos una pregunta.");
+        }
+
+        listaPreguntas.remove(pregunta);
+    }
 }

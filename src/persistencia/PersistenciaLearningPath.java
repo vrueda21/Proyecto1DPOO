@@ -1,17 +1,16 @@
 package persistencia;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import usuario.Profesor;
 import LPRS.LearningPath;
-import actividad.Actividad;
 
-public class PersistenciaLearningPath{
+public class PersistenciaLearningPath // Esta clase se encarga de la persistencia de los LearningPaths, guardándolos en un archivo de texto, aqui tambien se hace el manejo de las actividades y preguntas ya que estas dependen de los LearningPaths.
+
+{
     
-    private static final String RUTA_ARCHIVO = "src/persistencia/learningPaths.txt"; // Path del archivo de texto donde se guardan los LearningPaths
+    private static final String RUTA_ARCHIVO = "src/persistencia/learningPaths.txt"; // Path del archivo de texto donde se guardan los LearningPaths con sus actividades y preguntas
     
     // Método para guardar un LearningPath en el archivo
     public static void guardarLearningPath(LearningPath learningPath) throws IOException {

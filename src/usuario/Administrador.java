@@ -2,6 +2,7 @@ package usuario;
 
 import LPRS.LearningPath;
 import actividad.Actividad;
+import java.util.ArrayList;
 
 public class Administrador extends Usuario{
 
@@ -23,7 +24,7 @@ public class Administrador extends Usuario{
 
     public void crearProfesor(String nombre, String contrasenia, String correo){
 
-        Profesor profesor = new Profesor(nombre, contrasenia, correo);
+        Profesor profesor = new Profesor(nombre, contrasenia, correo, null, null);
 
     }
 
@@ -51,6 +52,8 @@ public class Administrador extends Usuario{
 
     }
     
+    
+
     
 
 }

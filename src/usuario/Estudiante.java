@@ -82,7 +82,7 @@ public class Estudiante extends Usuario{
 
     }
 
-    public Actividad comenzarActividad() throws IllegalStateException{
+    public Actividad comenzarActividad() throws IllegalStateException{ // Ahora mismo esta no nos interesa pero servira para la interfaz de la proxima entrega
         
         if (actividadActual==null){
             if (learningPathActual!=null){

@@ -10,11 +10,44 @@ import pregunta.PreguntaCerrada;
 import pregunta.Pregunta;
 
 public class Profesor extends Usuario {
+    private List<LearningPath> learningPathCreado;
+    private List<Estudiante> estudiantes;
 
-    public Profesor(String nombre, String contrasenia, String correo) {
-        super(nombre, contrasenia, "profesor", correo);
+    public Profesor(String nombre, String contrasena, String correo, List<LearningPath> learningPathCreado, List<Estudiante> estudiantes) {
+        super(nombre, contrasena, "profesor",correo);
+        this.learningPathCreado = learningPathCreado;
+        this.estudiantes = estudiantes;
     }
 
+    // Getters y Setters
+
+    public List<LearningPath> getLearningPathCreado() {
+        return learningPathCreado;
+    }
+
+    public void setLearningPathCreado(List<LearningPath> learningPathCreado) {
+        // Verificar que la lista de Learning Paths no sea nula
+
+        if (learningPathCreado == null) {
+            throw new IllegalArgumentException("La lista de Learning Paths no puede ser nula.");
+        }
+        this.learningPathCreado = learningPathCreado;
+    }
+
+    public List<Estudiante> getEstudiantes() {
+        return estudiantes;
+    }
+
+    public void setEstudiantes(List<Estudiante> estudiantes) {
+        // Verificar que la lista de estudiantes no sea nula
+
+        if (estudiantes == null) {
+            throw new IllegalArgumentException("La lista de estudiantes no puede ser nula.");
+        }
+        this.estudiantes = estudiantes;
+    }
+
+    
     // Método para evaluar la tarea
     public void evaluarTarea(Tarea tarea, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
         tarea.evaluar(this, estudiante, learningPath, calificacionObtenida, exitosa);
@@ -59,67 +92,111 @@ public class Profesor extends Usuario {
 
         LearningPath learningPath = new LearningPath(titulo, nivelDificultad, descripcion, objetivos, duracionMinutos, this, rating, listaActividades);
         System.out.println("Learning Path creado exitosamente: " + learningPath.getTitulo());
+
+        // Agregar el Learning Path a la lista de Learning Paths creados por el profesor
+        this.learningPathCreado.add(learningPath);
     }
 
-    // Método para crear actividades en el Learning Path
-    public void crearActividad(LearningPath learningPathActual, String descripcion, Nivel nivelDificultad, String objetivo, 
-                               int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, 
-                               Obligatoria obligatoria, String tipo, Profesor creador, 
-                               List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas, 
-                               List<PreguntaAbierta> listaPreguntasAbiertas, List<PreguntaCerrada> listaPreguntasCerradas, 
-                               String submissionMethod, double calificacionMinima, String tipoRecurso, List<Pregunta> listaPreguntas) {
+// Método para crear actividades en el Learning Path (Se adapto del que ya se hizo para la persistencia)
 
-        Actividad nuevaActividad = null;
+public void crearActividad(LearningPath learningPath, String descripcion, Nivel nivelDificultad, String objetivo,
+                           int duracionEsperada, double version, LocalDateTime fechaLimite, Status status,
+                           Obligatoria obligatoria, String tipo, List<Actividad> actividadesPreviasSugeridas,
+                           List<Actividad> actividadesSeguimientoRecomendadas, ArrayList<PreguntaAbierta> listaPreguntasAbiertas,
+                           List<PreguntaCerrada> listaPreguntasCerradas, String submissionMethod,
+                           double calificacionMinima, String tipoRecurso, List<Pregunta> listaPreguntas) {
 
-        switch (tipo.toUpperCase()) {
-            case "TAREA":
-                nuevaActividad = new Tarea(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, 
-                                           status, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas, 
-                                           actividadesSeguimientoRecomendadas);
-                break;
+    Actividad nuevaActividad;
 
-            case "ENCUESTA":
-                if (listaPreguntasAbiertas == null || listaPreguntasAbiertas.isEmpty()) {
-                    throw new IllegalArgumentException("La encuesta debe tener preguntas abiertas.");
-                }
-                nuevaActividad = new Encuesta(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, 
-                                              status, obligatoria, creador, new ArrayList<>(listaPreguntasAbiertas));
-                break;
+    Profesor creador = this;
 
-                case "EXAMEN":
-                    if (listaPreguntas == null || listaPreguntas.isEmpty()) {
-                        throw new IllegalArgumentException("El examen debe tener al menos una pregunta.");
-                    }
-                    nuevaActividad = new Examen(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-                                                fechaLimite, status, obligatoria, new ArrayList<>(listaPreguntas), calificacionMinima, 
-                                                creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
-                    break;
+    switch (tipo.toUpperCase()) {
+        case "TAREA":
+            // Creación de la Tarea
+            nuevaActividad = new Tarea(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
+                                       status, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas,
+                                       actividadesSeguimientoRecomendadas);
+            break;
 
-            case "QUIZ":
-                if (listaPreguntasCerradas == null || listaPreguntasCerradas.isEmpty()) {
-                    throw new IllegalArgumentException("El quiz debe tener preguntas cerradas.");
-                }
-                nuevaActividad = new Quiz(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite, 
-                                          status, obligatoria, new ArrayList<>(listaPreguntasCerradas), calificacionMinima, creador, 
-                                          actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
-                break;
+        case "ENCUESTA":
+            // Verificación de preguntas abiertas para Encuesta
+            if (listaPreguntasAbiertas == null || listaPreguntasAbiertas.isEmpty()) {
+                throw new IllegalArgumentException("La encuesta debe tener preguntas abiertas.");
+            }
+            nuevaActividad = new Encuesta(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
+                                          status, obligatoria, actividadesPreviasSugeridas,
+                                          actividadesSeguimientoRecomendadas, creador, listaPreguntasAbiertas);
+            break;
 
-            case "RECURSO EDUCATIVO":
-                nuevaActividad = new RecursoEducativo(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-                                                      fechaLimite, status, obligatoria, tipoRecurso, creador, 
-                                                      actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
-                break;
+        case "EXAMEN":
+            // Verificación de preguntas para Examen
+            if (listaPreguntas == null || listaPreguntas.isEmpty()) {
+                throw new IllegalArgumentException("El examen debe tener al menos una pregunta.");
+            }
+            nuevaActividad = new Examen(descripcion, nivelDificultad, objetivo, duracionEsperada, version,
+                                        fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima,
+                                        creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+            break;
 
-            default:
-                throw new IllegalStateException("Tipo de actividad no válido.");
-        }
+        case "QUIZ":
+            // Verificación de preguntas cerradas para Quiz
+            if (listaPreguntasCerradas == null || listaPreguntasCerradas.isEmpty()) {
+                throw new IllegalArgumentException("El quiz debe tener preguntas cerradas.");
+            }
+            nuevaActividad = new Quiz(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
+                                      status, obligatoria, listaPreguntasCerradas, calificacionMinima, creador,
+                                      actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+            break;
 
-        // Agregar la nueva actividad al Learning Path
-        if (nuevaActividad != null) {
-            learningPathActual.agregarActividad(nuevaActividad);
-            System.out.println("Actividad " + tipo + " agregada al Learning Path: " + learningPathActual.getTitulo());
-        }
+        case "RECURSO EDUCATIVO":
+            // Verificación de tipoRecurso para Recurso Educativo
+            if (tipoRecurso == null || tipoRecurso.isEmpty()) {
+                throw new IllegalArgumentException("El tipo de recurso no puede estar vacío.");
+            }
+            nuevaActividad = new RecursoEducativo(descripcion, nivelDificultad, objetivo, duracionEsperada, version,
+                                                  fechaLimite, status, obligatoria, tipoRecurso, creador,
+                                                  actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+            break;
+
+        default:
+            throw new IllegalStateException("Tipo de actividad no válido: " + tipo);
     }
+
+    // Agregar la nueva actividad al Learning Path
+    learningPath.agregarActividad(nuevaActividad);
+    System.out.println("Actividad " + tipo + " agregada al Learning Path: " + learningPath.getTitulo());
+}
+
+
+// Metodo para agregar estudiantes a la lista del profesor si estan inscritos en el learning path creado por el profesor o actividad
+
+public void agregarEstudianteSiCorresponde(LearningPath learningPath, Estudiante estudiante, Profesor profesor) {
+    if (learningPath == null) {
+        throw new IllegalArgumentException("El Learning Path no puede ser nulo.");
+    }
+    if (estudiante == null) {
+        throw new IllegalArgumentException("El estudiante no puede ser nulo.");
+    }
+    if (!learningPath.getCreador().equals(profesor)) {
+        throw new IllegalStateException("El profesor no es el creador del Learning Path.");
+    }
+    if (!learningPath.verificarSiInscrito(estudiante)) {
+        throw new IllegalStateException("El estudiante no está inscrito en el Learning Path.");
+    }
+    agregarEstudiante(estudiante);
+}
+
+public void agregarEstudiante(Estudiante estudiante) {
+    if (estudiante == null) {
+        throw new IllegalArgumentException("El estudiante no puede ser nulo.");
+    }
+    if (estudiantes.contains(estudiante)) {
+        throw new IllegalStateException("El estudiante ya está inscrito en la lista.");
+    }
+    estudiantes.add(estudiante);
+}
+
+
+
 
 }
-    // Método

@@ -162,6 +162,9 @@ public class LearningPath {
         this.status = status;
     }
 
+    public Profesor getCreador() { // Obtener el creador del Learning Path
+        return creador;
+    }
 
     public List<Actividad> getListaActividades() { // Obtener la lista de actividades del Learning Path
         return listaActividades;

@@ -6,7 +6,6 @@ import usuario.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
 
 public class TestPersistenciaLearningPath {
@@ -14,7 +13,7 @@ public class TestPersistenciaLearningPath {
     public static void main(String[] args) {
         try {
             // Paso 1: Crear un profesor y un LearningPath de prueba
-            Profesor profesor = new Profesor("Juan", "1234", "juan@example.com");
+            Profesor profesor = new Profesor("Juan", "1234", "juan@example.com", new ArrayList<>(), new ArrayList<>());
             LearningPath learningPathOriginal = new LearningPath(
                 "Learning Path de Prueba", 
                 Nivel.Intermedio, 
@@ -25,6 +24,16 @@ public class TestPersistenciaLearningPath {
                 4.5f, 
                 new ArrayList<>()
             );
+
+            // Agregar el LearningPath al profesor
+            profesor.getLearningPathCreado().add(learningPathOriginal);
+
+            // Verificar que el LearningPath se haya agregado al profesor
+
+            System.out.println("=== Verificación de Learning Path en el Profesor ===");
+            System.out.println("Número de Learning Paths del profesor "+ profesor.getNombre()+": " + profesor.getLearningPathCreado().size());
+            System.out.println("¿El Learning Path original está en la lista? " + profesor.getLearningPathCreado().contains(learningPathOriginal));
+            
 
             System.out.println("=== Creando actividades de prueba ===");
 
