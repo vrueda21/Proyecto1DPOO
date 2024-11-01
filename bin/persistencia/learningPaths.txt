@@ -10,3 +10,21 @@ Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-0
 Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T06:11:37.218780000,2024-10-31T06:11:37.218788000,Incompleto,NO,,,,60.0,0.0,Juan
 COMPLETADAS_CON_DUP:
 COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T09:30:34.114807000,2024-10-31T09:30:34.115671000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T09:30:34.115448000,2024-10-31T09:30:34.115598000,Incompleto,SI,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T09:30:34.115650000,2024-10-31T09:30:34.115657000,Incompleto,NO,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T23:00:36.144683000,2024-10-31T23:00:36.145773000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T23:00:36.145352000,2024-10-31T23:00:36.145685000,Incompleto,SI,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T23:00:36.145749000,2024-10-31T23:00:36.145757000,Incompleto,NO,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Descripción de prueba,Objetivos de prueba,120,2024-10-31T23:00:43.840062000,2024-10-31T23:00:43.840657000,3,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-07T23:00:43.840434000,2024-10-31T23:00:43.840583000,Incompleto,SI,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-05T23:00:43.840635000,2024-10-31T23:00:43.840642000,Incompleto,NO,,,,60.0,0.0,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:

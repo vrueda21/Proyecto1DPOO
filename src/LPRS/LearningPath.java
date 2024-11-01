@@ -1,15 +1,35 @@
 package LPRS;
-import actividad.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.stream.Collectors; // Importar la clase Collectors para utilizar el método joining, el metodo joining se usara para unir las descripciones de las actividades completadas y asi guardarlas en el archivo de texto
+
+import actividad.Actividad;
+import actividad.Encuesta;
+import actividad.Examen;
+import actividad.Nivel;
+import actividad.Obligatoria;
+import actividad.Quiz;
+import actividad.RecursoEducativo;
+import actividad.Status;
+import actividad.Tarea;
 import pregunta.Opcion;
 import pregunta.Pregunta;
 import pregunta.PreguntaAbierta;
 import pregunta.PreguntaCerrada;
-import usuario.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.io.*;
-import java.util.stream.Collectors; // Importar la clase Collectors para utilizar el método joining, el metodo joining se usara para unir las descripciones de las actividades completadas y asi guardarlas en el archivo de texto
+import usuario.Estudiante;
+import usuario.Profesor;
 
 public class LearningPath {
 
@@ -356,34 +376,45 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         (recurso.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         recurso.getStatus()+","+
         (recurso.esObligatoria()? "SI" : "NO")+","+
-        recurso.getTipo()+","+
         recurso.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         recurso.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         recurso.getTipoRecurso()+","+
         recurso.getCreador().getNombre());
     } 
-    else if (actividad instanceof Examen)
-    {
+    else if (actividad instanceof Examen) {
         Examen examen = (Examen) actividad;
-        writer.write("Examen,"+ actividad.getDescripcion()+","+
-        examen.getNivelDificultad()+","+
-        examen.getObjetivo()+","+
-        examen.getDuracionEsperada()+","+
-        examen.getVersion()+","+
-        (examen.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
-        (examen.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
-        examen.getStatus()+","+
-        (examen.esObligatoria()? "SI" : "NO")+","+
-        examen.getTipo()+","+
-        examen.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
-        examen.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
-        examen.getListaPreguntas().stream().map(Pregunta::getEnunciado).collect(Collectors.joining(","))+","+
-        examen.getCalificacionMinima()+","+
-        examen.getRespuestasCorrectas()+","+
-        examen.getCalificacionObtenida()+","+
-        examen.getRespuestasAbiertas().stream().collect(Collectors.joining(","))+","+
-        examen.getCreador().getNombre());
-    } 
+    
+        writer.write("Examen," + actividad.getDescripcion() + "," +
+                examen.getNivelDificultad() + "," +
+                examen.getObjetivo() + "," +
+                examen.getDuracionEsperada() + "," +
+                examen.getVersion() + "," +
+                (examen.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter) : "") + "," +
+                (examen.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter) : "") + "," +
+                examen.getStatus() + "," +
+                (examen.esObligatoria() ? "SI" : "NO") + "," +
+                examen.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
+                examen.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
+                examen.getListaPreguntas().stream()
+                        .map(pregunta -> {
+                            if (pregunta instanceof PreguntaCerrada) {
+                                return "Cerrada|" + pregunta.getEnunciado();
+                            } else if (pregunta instanceof PreguntaAbierta) {
+                                return "Abierta|" + pregunta.getEnunciado();
+                            }
+                            return "";
+                        })
+                        .collect(Collectors.joining(";")) + "," +
+                examen.getCalificacionMinima() + "," +
+                examen.getRespuestasCorrectas() + "," +
+                examen.getCalificacionObtenida() + "," +
+                examen.getRespuestasAbiertas().stream().collect(Collectors.joining(",")) + "," +
+                examen.getCreador().getNombre());
+    
+        writer.newLine();
+    }
+    
+    
     else if (actividad instanceof Encuesta)
     {
         Encuesta encuesta = (Encuesta) actividad;
@@ -477,9 +508,6 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         return null;
     }
 
-    
-    
-
     // Método auxiliar para determinar el tipo de actividad y cargarla
     private static Actividad cargarActividad(String linea, Profesor creador, DateTimeFormatter formatter) {
         String[] datos = linea.split(",");
@@ -571,10 +599,10 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
-        String tipoRecurso = datos[10];
-        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[11], creador, formatter);
-        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[12], creador, formatter);
-
+        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
+        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
+        String tipoRecurso = datos[12];
+        String nombreCreador = datos[13]; // No se usa en la creación del recurso porque ya se tiene el profesor
         // Crear el recurso educativo con los datos cargados
 
         RecursoEducativo recurso = new RecursoEducativo(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, tipoRecurso, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
@@ -587,7 +615,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
 
     }
 
-    private static Examen cargarExamen(String[] datos, Profesor creador, DateTimeFormatter formatter) {
+    private static Examen cargarExamen(String[] datos, Profesor creador, DateTimeFormatter formatter) { // Cambie lo de cargar examen porque no estaba cargando las preguntas bien el formato estaba rarisimo ahora lo que hace es que detecta si es cerrada o abierta y las carga en una lista de preguntas con un metodo para abiertas o cerradas dependiendo del tipo
         String descripcion = datos[1];
         Nivel nivel = Nivel.valueOf(datos[2]);
         String objetivo = datos[3];
@@ -597,17 +625,33 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
         Status status = Status.valueOf(datos[8]);
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
-        double calificacionMinima = Double.parseDouble(datos[10]);
-        int respuestasCorrectas = Integer.parseInt(datos[11]);
-        double calificacionObtenida = Double.parseDouble(datos[12]);
-        List<String> respuestasAbiertas = Arrays.asList(datos[13].split(","));
-        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[14], creador, formatter);
-        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[15], creador, formatter);
+        List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
+        List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
+    
+        // Cargar lista de preguntas de distintos tipos
+        List<Pregunta> listaPreguntas = new ArrayList<>();
+        String[] preguntasData = datos[12].split(";"); // Asume que cada pregunta está separada por ;
+        for (String preguntaData : preguntasData) {
+            if (preguntaData.startsWith("Cerrada|")) {
+                String preguntaCerradaStr = preguntaData.substring("Cerrada|".length());
+                List<PreguntaCerrada> preguntasCerradas = cargarPreguntasCerradas(preguntaCerradaStr);
+                listaPreguntas.addAll(preguntasCerradas);
+            } else if (preguntaData.startsWith("Abierta|")) {
+                String preguntaAbiertaStr = preguntaData.substring("Abierta|".length());
+                List<PreguntaAbierta> preguntasAbiertas = cargarPreguntasAbiertas(preguntaAbiertaStr);
+                listaPreguntas.addAll(preguntasAbiertas);
+            }
+        }
+    
+        double calificacionMinima = Double.parseDouble(datos[13]);
+        int respuestasCorrectas = Integer.parseInt(datos[14]);
+        double calificacionObtenida = Double.parseDouble(datos[15]);
+        List<String> respuestasAbiertas = Arrays.asList(datos[16].split(","));
 
-        Examen examen = new Examen(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, new ArrayList<>(), calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
-        
-        // Asignar los valores que no entran al constructor directamente como calificacion obtenida, respuestas correctas, respuestas abiertas y fecha de inicio
-
+    
+        Examen examen = new Examen(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+    
+        // Asignar valores adicionales
         examen.setFechaInicio(fechaInicio);
         examen.setCalificacionObtenida(calificacionObtenida);
         examen.setRespuestasCorrectas(respuestasCorrectas);
@@ -615,6 +659,7 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
     
         return examen;
     }
+    
 
     private static Encuesta cargarEncuesta(String[] datos, Profesor creador, DateTimeFormatter formatter) {
         String descripcion = datos[1];
@@ -664,37 +709,61 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
 
     // Método auxiliar para cargar las preguntas de un quiz o examen
 
+    public static List<Pregunta> cargarListaPreguntas(String preguntasStr) {
+        List<Pregunta> listaPreguntas = new ArrayList<>();
+    
+        if (preguntasStr == null || preguntasStr.isEmpty()) {
+            return listaPreguntas;
+        }
+    
+        String[] preguntasData = preguntasStr.split(";");
+        for (String preguntaStr : preguntasData) {
+            if (preguntaStr.startsWith("Cerrada:")) {
+                String preguntaCerradaStr = preguntaStr.substring("Cerrada:".length());
+                listaPreguntas.addAll(cargarPreguntasCerradas(preguntaCerradaStr));
+            } else if (preguntaStr.startsWith("Abierta:")) {
+                String preguntaAbiertaStr = preguntaStr.substring("Abierta:".length());
+                listaPreguntas.addAll(cargarPreguntasAbiertas(preguntaAbiertaStr));
+            } else {
+                System.out.println("Tipo de pregunta desconocido o formato incorrecto: " + preguntaStr);
+            }
+        }
+    
+        return listaPreguntas;
+    }
+    
+    
     // Método para cargar una lista de preguntas cerradas a partir de una cadena de texto
     public static List<PreguntaCerrada> cargarPreguntasCerradas(String preguntasStr) {
         List<PreguntaCerrada> listaPreguntas = new ArrayList<>();
-
+    
         if (preguntasStr == null || preguntasStr.isEmpty()) {
             return listaPreguntas; // Retorna una lista vacía si no hay preguntas
         }
-
-        // Divide cada pregunta usando ';'
+    
+        // Dividir cada pregunta usando ';'
         String[] preguntasData = preguntasStr.split(";");
         for (String preguntaStr : preguntasData) {
             // Divide cada componente de la pregunta usando '|'
             String[] partesPregunta = preguntaStr.split("\\|");
-
+    
             // El primer elemento es el enunciado de la pregunta
             String enunciado = partesPregunta[0];
-
+    
             // Crear una nueva pregunta cerrada con el enunciado
             PreguntaCerrada pregunta = new PreguntaCerrada(enunciado);
-
+    
             // Diccionarios para almacenar las opciones
             Dictionary<Opcion, String> opcionA = new Hashtable<>();
             Dictionary<Opcion, String> opcionB = new Hashtable<>();
             Dictionary<Opcion, String> opcionC = new Hashtable<>();
             Dictionary<Opcion, String> opcionD = new Hashtable<>();
             Dictionary<Opcion, String> respuestaCorrecta = new Hashtable<>();
-
+    
             // Iterar sobre las partes de la pregunta para asignar opciones y respuesta
             for (int i = 1; i < partesPregunta.length; i++) {
                 String parte = partesPregunta[i];
-
+    
                 if (parte.startsWith("A:")) {
                     opcionA.put(Opcion.A, parte.substring(2));
                     pregunta.setOpcionA(opcionA);
@@ -721,13 +790,39 @@ private void guardarActividad(Actividad actividad, BufferedWriter writer) throws
                     pregunta.setRespuesta(respuestaCorrecta);
                 }
             }
-
+    
             // Añadir la pregunta configurada a la lista
             listaPreguntas.add(pregunta);
         }
-
+    
         return listaPreguntas; // Retorna la lista de preguntas cerradas
     }
+    
+
+    public static List<PreguntaAbierta> cargarPreguntasAbiertas(String preguntasStr) {
+        List<PreguntaAbierta> listaPreguntas = new ArrayList<>();
+    
+        if (preguntasStr == null || preguntasStr.isEmpty()) {
+            return listaPreguntas; // Retorna una lista vacía si no hay preguntas
+        }
+    
+        // Dividir cada pregunta usando ';'
+        String[] preguntasData = preguntasStr.split(";");
+        for (String preguntaStr : preguntasData) {
+            // Cada pregunta tiene el formato "Abierta:enunciado"
+            String enunciado = preguntaStr.trim();
+    
+            // Crear una nueva pregunta abierta con el enunciado
+            PreguntaAbierta pregunta = new PreguntaAbierta(enunciado);
+    
+            // Añadir la pregunta configurada a la lista
+            listaPreguntas.add(pregunta);
+        }
+    
+        return listaPreguntas; // Retorna la lista de preguntas abiertas
+    }
+
 
 }
+    
 
