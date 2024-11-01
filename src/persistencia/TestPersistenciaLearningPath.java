@@ -26,6 +26,8 @@ public class TestPersistenciaLearningPath {
                 new ArrayList<>()
             );
 
+            System.out.println("=== Creando actividades de prueba ===");
+
             // Paso 2: Agregar actividades al LearningPath
             Tarea tarea = new Tarea(
                 "Tarea de Ejemplo", 
@@ -58,30 +60,62 @@ public class TestPersistenciaLearningPath {
                 new ArrayList<>()
             );
 
+            // Agregar actividades al LearningPath original
             learningPathOriginal.agregarActividad(tarea);
             learningPathOriginal.agregarActividad(quiz);
 
-            // Paso 3: Guardar el LearningPath en el archivo
-            System.out.println("Guardando el Learning Path en el archivo...");
+            System.out.println("=== Guardando el Learning Path en el archivo ===");
             PersistenciaLearningPath.guardarLearningPath(learningPathOriginal);
 
-            // Paso 4: Cargar el LearningPath desde el archivo
-            System.out.println("Cargando el Learning Path desde el archivo...");
+            // Paso 3: Cargar el LearningPath desde el archivo
+            System.out.println("=== Cargando el Learning Path desde el archivo ===");
             List<LearningPath> learningPathsCargados = PersistenciaLearningPath.cargarLearningPaths(profesor);
 
-            // Paso 5: Verificar el resultado cargado
+            // Paso 4: Verificar el resultado cargado
             if (!learningPathsCargados.isEmpty()) {
                 LearningPath learningPathCargado = learningPathsCargados.get(0);
 
-                // Comparar el título como ejemplo para verificar que los datos coinciden
-                System.out.println("Título del Learning Path cargado: " + learningPathCargado.getTitulo());
-                System.out.println("Título del Learning Path original: " + learningPathOriginal.getTitulo());
-                System.out.println("Comparación de los títulos: " + learningPathCargado.getTitulo().equals(learningPathOriginal.getTitulo()));
+                System.out.println("\n=== Verificación del Learning Path cargado ===");
+                
+                // Comparar el título
+                System.out.println("Título cargado: " + learningPathCargado.getTitulo());
+                System.out.println("Título original: " + learningPathOriginal.getTitulo());
+                System.out.println("¿Los títulos coinciden? " + learningPathCargado.getTitulo().equals(learningPathOriginal.getTitulo()));
 
-                // Comparar la cantidad de actividades
+                // Comparar el número de actividades
                 System.out.println("Número de actividades cargadas: " + learningPathCargado.getListaActividades().size());
                 System.out.println("Número de actividades originales: " + learningPathOriginal.getListaActividades().size());
-                System.out.println("Comparación de actividades: " + (learningPathCargado.getListaActividades().size() == learningPathOriginal.getListaActividades().size()));
+                System.out.println("¿El número de actividades coincide? " + (learningPathCargado.getListaActividades().size() == learningPathOriginal.getListaActividades().size()));
+
+                // Imprimir detalles de cada actividad cargada
+                System.out.println("\n=== Detalle de Actividades Cargadas ===");
+                for (int i = 0; i < learningPathCargado.getListaActividades().size(); i++) {
+                    Actividad actividadCargada = learningPathCargado.getListaActividades().get(i);
+                    Actividad actividadOriginal = learningPathOriginal.getListaActividades().get(i);
+                    System.out.println("Actividad " + (i + 1) + ":");
+
+                    System.out.println("  Descripción cargada: " + actividadCargada.getDescripcion());
+                    System.out.println("  Descripción original: " + actividadOriginal.getDescripcion());
+                    System.out.println("  ¿Descripción coincide? " + actividadCargada.getDescripcion().equals(actividadOriginal.getDescripcion()));
+
+                    System.out.println("  Tipo de actividad: " + (actividadCargada instanceof Tarea ? "Tarea" : "Quiz"));
+
+                    if (actividadCargada instanceof Tarea && actividadOriginal instanceof Tarea) {
+                        Tarea tareaCargada = (Tarea) actividadCargada;
+                        Tarea tareaOriginal = (Tarea) actividadOriginal;
+                        System.out.println("  Duración cargada: " + tareaCargada.getDuracionEsperada());
+                        System.out.println("  Duración original: " + tareaOriginal.getDuracionEsperada());
+                        System.out.println("  ¿Duración coincide? " + (tareaCargada.getDuracionEsperada() == tareaOriginal.getDuracionEsperada()));
+                    } else if (actividadCargada instanceof Quiz && actividadOriginal instanceof Quiz) {
+                        Quiz quizCargado = (Quiz) actividadCargada;
+                        Quiz quizOriginal = (Quiz) actividadOriginal;
+                        System.out.println("  Calificación mínima cargada: " + quizCargado.getCalificacionMinima());
+                        System.out.println("  Calificación mínima original: " + quizOriginal.getCalificacionMinima());
+                        System.out.println("  ¿Calificación mínima coincide? " + (quizCargado.getCalificacionMinima() == quizOriginal.getCalificacionMinima()));
+                    }
+
+                    System.out.println(); // Línea en blanco para separar actividades
+                }
 
                 // Puedes agregar más comparaciones según los atributos que desees verificar
             } else {
