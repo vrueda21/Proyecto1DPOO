@@ -8,7 +8,7 @@ public class Estudiante extends Usuario{
 
     protected Actividad actividadActual;
     protected LearningPath learningPathActual;
-    protected List<LearningPath> listaLearningPathsCompletados;
+    public List<LearningPath> listaLearningPathsCompletados;
     protected List<Actividad> listaActividadesCompletadas;
     protected List<Actividad> listaActividadesPorCompletar;
     protected List<Actividad> listaActividadesPreviasSugeridas;
