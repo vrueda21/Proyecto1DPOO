@@ -7,6 +7,7 @@ import LPRS.LearningPath;
 import actividad.*;
 import pregunta.PreguntaAbierta;
 import pregunta.PreguntaCerrada;
+import pregunta.Opcion;
 import pregunta.Pregunta;
 
 public class Profesor extends Usuario {
@@ -196,7 +197,29 @@ public void agregarEstudiante(Estudiante estudiante) {
     estudiantes.add(estudiante);
 }
 
+public void crearPreguntaCerrada(String enunciado) {
+        PreguntaCerrada pregunta = new PreguntaCerrada(enunciado);
+        System.out.println("Pregunta cerrada creada: " + pregunta.getEnunciado());
+    }
 
+    public void agregarOpcionA(Dictionary<Opcion, String> opcionA, PreguntaCerrada pregunta) {
+        pregunta.setOpcionA(opcionA);
+        System.out.println("Opción agregada a la pregunta cerrada: " + pregunta.getEnunciado());
+    }
+
+    public void agregarOpcionB(Dictionary<Opcion, String> opcionB, PreguntaCerrada pregunta) {
+        pregunta.setOpcionB(opcionB);
+        System.out.println("Opción agregada a la pregunta cerrada: " + pregunta.getEnunciado());
+    }
+
+    public void agregarOpcionC(Dictionary<Opcion, String> opcionC, PreguntaCerrada pregunta) {
+        pregunta.setOpcionC(opcionC);
+        System.out.println("Opción agregada a la pregunta cerrada: " + pregunta.getEnunciado());
+    }
+    public void agregarOpcionD(Dictionary<Opcion, String> opcionD, PreguntaCerrada pregunta) {
+        pregunta.setOpcionD(opcionD);
+        System.out.println("Opción agregada a la pregunta cerrada: " + pregunta.getEnunciado());
+    }
 
 
 }
