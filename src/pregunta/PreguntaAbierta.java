@@ -23,7 +23,7 @@ public class PreguntaAbierta extends Pregunta {
     }
 
     // Método para que el profesor marque la pregunta como evaluada
-    public void evaluarPorProfesor(boolean esCorrecta, String comentario) {
+    public void evaluarPorProfesor(boolean esCorrecta, String comentario) { 
         this.evaluada = true;
         this.esCorrecta = esCorrecta;
         this.comentarioProfesor = comentario;

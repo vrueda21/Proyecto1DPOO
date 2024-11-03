@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.HashMap;
+import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) {
-        // Definir archivo de persistencia para profesores, estudiantes y learning paths
+        // Definir archivos de persistencia para profesores, estudiantes y learning paths
         File archivoProfesores = new File("src/persistencia/profesores.txt");
         File archivoEstudiantes = new File("src/persistencia/estudiantes.txt");
         File archivoLearningPaths = new File("src/persistencia/learningPaths.txt");
@@ -46,6 +48,15 @@ public class Main {
             profesor.agregarEstudiante(estudiante1);
             profesor.agregarEstudiante(estudiante2);
 
+            // Inscribir estudiantes en el LearningPath
+            learningPath.inscripcionEstudiante(estudiante1);
+            learningPath.inscripcionEstudiante(estudiante2);
+
+            // Crear el mapa de estados inicial para los estudiantes
+            HashMap<Estudiante, Status> estadosTarea = new HashMap<>();
+            estadosTarea.put(estudiante1, Status.Incompleto);
+            estadosTarea.put(estudiante2, Status.Incompleto);
+
             // Crear y agregar una Tarea al LearningPath
             Tarea tarea = new Tarea(
                 "Tarea de Ejemplo", 
@@ -54,7 +65,7 @@ public class Main {
                 60, 
                 1.0, 
                 LocalDateTime.now().plusDays(7), 
-                Status.Incompleto, 
+                estadosTarea, 
                 Obligatoria.SI, 
                 "LMS", 
                 profesor, 
@@ -66,16 +77,29 @@ public class Main {
             // Crear y agregar un Quiz al LearningPath
             List<PreguntaCerrada> preguntasQuiz = new ArrayList<>();
             PreguntaCerrada preguntaQuiz = new PreguntaCerrada("¿Cuál es el resultado de 2+2?");
-            
-            Dictionary<Opcion, String> opcionesQuiz = new Hashtable<>();
-            opcionesQuiz.put(Opcion.A, "3");
-            opcionesQuiz.put(Opcion.B, "4"); // Respuesta correcta
-            opcionesQuiz.put(Opcion.C, "5");
-            opcionesQuiz.put(Opcion.D, "6");
 
-            preguntaQuiz.setOpcionA(opcionesQuiz);
-            preguntaQuiz.setRespuesta(opcionesQuiz);  // Respuesta correcta
+            Dictionary<Opcion, String> opcionA = new Hashtable<>();
+            opcionA.put(Opcion.A, "3");
+            preguntaQuiz.setOpcionA(opcionA);
+
+            Dictionary<Opcion, String> opcionB = new Hashtable<>();
+            opcionB.put(Opcion.B, "4"); // Respuesta correcta
+            preguntaQuiz.setOpcionB(opcionB);
+
+            Dictionary<Opcion, String> opcionC = new Hashtable<>();
+            opcionC.put(Opcion.C, "5");
+            preguntaQuiz.setOpcionC(opcionC);
+
+            Dictionary<Opcion, String> opcionD = new Hashtable<>();
+            opcionD.put(Opcion.D, "6");
+            preguntaQuiz.setOpcionD(opcionD);
+
+            preguntaQuiz.setRespuesta(opcionB); // Marca la opción B como la respuesta correcta
             preguntasQuiz.add(preguntaQuiz);
+
+            HashMap<Estudiante, Status> estadosQuiz = new HashMap<>();
+            estadosQuiz.put(estudiante1, Status.Incompleto);
+            estadosQuiz.put(estudiante2, Status.Incompleto);
 
             Quiz quiz = new Quiz(
                 "Quiz de Matemáticas Básicas", 
@@ -84,7 +108,7 @@ public class Main {
                 30, 
                 1.0, 
                 LocalDateTime.now().plusDays(5), 
-                Status.Incompleto, 
+                estadosQuiz, 
                 Obligatoria.NO, 
                 preguntasQuiz, 
                 60.0, 
@@ -94,7 +118,10 @@ public class Main {
             );
             learningPath.agregarActividad(quiz);
 
-            // Crear y agregar un RecursoEducativo al LearningPath
+            HashMap<Estudiante, Status> estadosRecurso = new HashMap<>();
+            estadosRecurso.put(estudiante1, Status.Incompleto);
+            estadosRecurso.put(estudiante2, Status.Incompleto);
+
             RecursoEducativo recurso = new RecursoEducativo(
                 "Video de Introducción a Java", 
                 Nivel.Intermedio, 
@@ -102,7 +129,7 @@ public class Main {
                 20, 
                 1.0, 
                 LocalDateTime.now().plusDays(10), 
-                Status.Incompleto, 
+                estadosRecurso, 
                 Obligatoria.NO, 
                 "video", 
                 profesor, 
@@ -111,61 +138,52 @@ public class Main {
             );
             learningPath.agregarActividad(recurso);
 
-            // Guardar el profesor en el archivo de persistencia
-            PersistenciaProfesor.guardarProfesor(profesor, archivoProfesores);
-            // Guardar los estudiantes en el archivo de persistencia
-            PersistenciaEstudiante.guardarEstudiante(estudiante1, archivoEstudiantes);
-            PersistenciaEstudiante.guardarEstudiante(estudiante2, archivoEstudiantes);
+            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath);
 
-            // Guardar el LearningPath con todas sus actividades en el archivo de persistencia
-            PersistenciaLearningPath.guardarLearningPath(learningPath);
+            // === Simulación de respuestas por ambos estudiantes ===
+            System.out.println("\n== Simulación de Respuestas de Estudiantes ==");
 
-            // === Cargar datos desde la persistencia y mostrar detalles ===
-            System.out.println("=== Cargando datos de persistencia ===");
+            // Estudiante 1 completa todas las actividades exitosamente
+            tarea.responder(estudiante1, "LMS");
+            learningPath.actividadObligatoriaCompletada(tarea, estudiante1);
+            quiz.responder(estudiante1, "1:B"); // Respuesta correcta
+            if (quiz.esExitosa(estudiante1)) learningPath.actividadObligatoriaCompletada(quiz, estudiante1);
+            recurso.responder(estudiante1, "visto");
+            if (recurso.esExitosa(estudiante1)) learningPath.actividadObligatoriaCompletada(recurso, estudiante1);
+            profesor.evaluarTarea(tarea, estudiante1, learningPath, 80.0, true);
 
-            // Cargar y mostrar profesores
-            List<Profesor> profesoresCargados = PersistenciaProfesor.cargarProfesores(archivoProfesores);
-            for (Profesor p : profesoresCargados) {
-                System.out.println("\nProfesor: " + p.getNombre());
-                System.out.println("Correo: " + p.getCorreo());
-                
-                System.out.println("Learning Paths Creados:");
-                for (LearningPath lp : p.getLearningPathCreado()) {
-                    System.out.println(" - " + lp.getTitulo());
-                }
-
-                System.out.println("Estudiantes:");
-                for (Estudiante e : p.getEstudiantes()) {
-                    System.out.println(" - " + e.getNombre() + " (" + e.getCorreo() + ")");
-                }
+            float progreso1 = learningPath.calcularProgreso(estudiante1);
+            if (progreso1 == 100.0f) {
+                estudiante1.listaLearningPathsCompletados.add(learningPath);
+                estudiante1.setLearningPathActual(null);
+                System.out.println("El estudiante 1 ha completado el Learning Path.");
             }
 
-            // Cargar y mostrar LearningPaths, incluyendo actividades
-            List<LearningPath> learningPathsCargados = PersistenciaLearningPath.cargarLearningPaths(profesor);
-            if (!learningPathsCargados.isEmpty()) {
-                LearningPath learningPathCargado = learningPathsCargados.get(0);
+            // Estudiante 2 completa parcialmente y falla en el quiz
+            tarea.responder(estudiante2, "Correo");
+            learningPath.actividadObligatoriaCompletada(tarea, estudiante2);
+            quiz.responder(estudiante2, "1:A"); // Respuesta incorrecta
+            recurso.responder(estudiante2, "visto");
+            if (recurso.esExitosa(estudiante2)) learningPath.actividadObligatoriaCompletada(recurso, estudiante2);
+            profesor.evaluarTarea(tarea, estudiante2, learningPath, 60.0, false);
 
-                System.out.println("\n=== Verificación del Learning Path cargado ===");
-                System.out.println("Título cargado: " + learningPathCargado.getTitulo());
-                System.out.println("Descripción: " + learningPathCargado.getDescripcion());
-                System.out.println("Objetivos: " + learningPathCargado.getObjetivos());
-                System.out.println("Duración en minutos: " + learningPathCargado.getDuracionMinutos());
+            float progreso2 = learningPath.calcularProgreso(estudiante2);
+            System.out.println("Progreso del Estudiante 1: " + progreso1 + "%");
+            System.out.println("Progreso del Estudiante 2: " + progreso2 + "%");
 
-                // Imprimir detalles de cada actividad cargada
-                System.out.println("\n=== Detalle de Actividades Cargadas ===");
-                for (Actividad actividad : learningPathCargado.getListaActividades()) {
-                    System.out.println("Actividad: " + actividad.getDescripcion());
-                    System.out.println("  Tipo: " + (actividad instanceof Tarea ? "Tarea" : "Quiz"));
-                    System.out.println("  Status: " + actividad.getStatus());
-                    System.out.println();
-                }
-            } else {
-                System.out.println("No se cargaron Learning Paths desde el archivo.");
-            }
+            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath);
 
         } catch (Exception e) {
             System.out.println("Error durante la ejecución: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // Método para sobrescribir datos de persistencia
+    private static void guardarDatos(File archivoProfesores, File archivoEstudiantes, File archivoLearningPaths, Profesor profesor, Estudiante estudiante1, Estudiante estudiante2, LearningPath learningPath) throws IOException {
+        PersistenciaProfesor.guardarProfesor(profesor, archivoProfesores);
+        PersistenciaEstudiante.guardarEstudiante(estudiante1, archivoEstudiantes);
+        PersistenciaEstudiante.guardarEstudiante(estudiante2, archivoEstudiantes);
+        PersistenciaLearningPath.guardarLearningPath(learningPath);
     }
 }

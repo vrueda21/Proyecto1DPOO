@@ -5,17 +5,18 @@ import usuario.Profesor;
 import usuario.Estudiante;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class Tarea extends Actividad {
 
     protected String submissionMethod; // Método de entrega (e.g., LMS, correo electrónico, etc.)
 
     public Tarea(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
-                 double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
+                 double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante, Obligatoria obligatoria, 
                  String submissionMethod, Profesor creador, List<Actividad> actividadesPreviasSugeridas, 
                  List<Actividad> actividadesSeguimientoRecomendadas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, "tarea", creador, 
+              fechaLimite, estadosPorEstudiante, obligatoria, "tarea", creador, 
               actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.submissionMethod = submissionMethod;
     }
@@ -27,25 +28,31 @@ public class Tarea extends Actividad {
     // Método para que el estudiante marque la tarea como enviada
     @Override
     public void responder(Estudiante estudiante, String respuesta) {
+
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+
         if (estudiante == null) {
             throw new SecurityException("Se requiere un estudiante para enviar la tarea.");
         }
 
-        if (this.status == Status.Enviada) {
+        if (estadoEstudiante == Status.Enviada || estadoEstudiante == Status.Exitosa) {
             throw new UnsupportedOperationException("La tarea ya ha sido enviada y no se puede reenviar.");
         }
 
         // La "respuesta" en este caso es el método de entrega (e.g., LMS, correo)
         this.submissionMethod = respuesta;
-        this.status = Status.Enviada;
+        setStatusParaEstudiante(estudiante, Status.Enviada);
         System.out.println("La tarea fue enviada por: " + estudiante.getNombre() + " usando el método: " + submissionMethod);
     }
 
     // Verificar si la tarea es exitosa
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        if (this.status == Status.Exitosa) {
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+
+        if (estadoEstudiante == Status.Exitosa || estadoEstudiante == Status.Completado) {
             System.out.println("La tarea fue completada exitosamente por: " + estudiante.getNombre());
+            estudiante.agregarActividadCompletada(this);
             return true;
         } else {
             System.out.println("La tarea no ha sido completada exitosamente por: " + estudiante.getNombre());
@@ -73,20 +80,24 @@ public class Tarea extends Actividad {
             throw new SecurityException("Solo el profesor creador puede evaluar la tarea.");
         }
 
+
         // Asignar la calificación y el estado según la evaluación
-        this.status = exitosa ? Status.Exitosa : Status.noExitosa;
+        estadosPorEstudiante.put(estudiante, exitosa ? Status.Exitosa : Status.noExitosa);
         System.out.println("La tarea fue marcada como " + (exitosa ? "exitosa" : "fallida") + " por el profesor: " + profesor.getNombre());
     }
 
     // Método para reintentar la tarea
     @Override
     public void reintentar(Estudiante estudiante) {
-        if (this.status == Status.Exitosa) {
+
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+
+        if (estadoEstudiante == Status.Exitosa || estadoEstudiante == Status.Completado) {
             throw new UnsupportedOperationException("No se puede reintentar una tarea que ya ha sido completada exitosamente.");
         }
 
         System.out.println("El estudiante " + estudiante.getNombre() + " está reintentando la tarea.");
-        this.status = Status.Incompleto; // Se reinicia el estado de la tarea
+        estadosPorEstudiante.put(estudiante, Status.Incompleto); // Se reinicia el estado de la tarea
     }
 
 }

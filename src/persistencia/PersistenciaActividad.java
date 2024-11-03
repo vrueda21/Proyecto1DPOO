@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import actividad.Actividad;
@@ -21,6 +22,7 @@ import actividad.Tarea;
 import pregunta.Pregunta;
 import pregunta.PreguntaAbierta;
 import pregunta.PreguntaCerrada;
+import usuario.Estudiante;
 import usuario.Profesor;
 
 public class PersistenciaActividad {
@@ -29,7 +31,9 @@ public class PersistenciaActividad {
     // Metodo auxiliar guardar actividades 
 
     public static void guardarActividad(Actividad actividad, BufferedWriter writer) throws IOException {
-
+        String estadosPorEstudianteStr = actividad.getEstadosPorEstudiante().entrySet().stream()
+            .map(entry -> entry.getKey().getCorreo() + ":" + entry.getValue().name())
+            .collect(Collectors.joining(";"));
     if (actividad instanceof Tarea)
     {
         Tarea tarea = (Tarea) actividad;
@@ -40,7 +44,7 @@ public class PersistenciaActividad {
         tarea.getVersion()+","+ 
         (tarea.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+ 
         (tarea.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
-        tarea.getStatus()+","+ 
+        estadosPorEstudianteStr+","+ 
         (tarea.esObligatoria()? "SI" : "NO")+","+ 
         tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -58,7 +62,7 @@ public class PersistenciaActividad {
         quiz.getVersion()+","+
         (quiz.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (quiz.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
-        quiz.getStatus()+","+
+        estadosPorEstudianteStr+","+
         (quiz.esObligatoria()? "SI" : "NO")+","+
         quiz.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         quiz.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -77,7 +81,7 @@ public class PersistenciaActividad {
         recurso.getVersion()+","+
         (recurso.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (recurso.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
-        recurso.getStatus()+","+
+        estadosPorEstudianteStr+","+
         (recurso.esObligatoria()? "SI" : "NO")+","+
         recurso.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
         recurso.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -94,7 +98,7 @@ public class PersistenciaActividad {
                 examen.getVersion() + "," +
                 (examen.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter) : "") + "," +
                 (examen.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter) : "") + "," +
-                examen.getStatus() + "," +
+                estadosPorEstudianteStr + "," +
                 (examen.esObligatoria() ? "SI" : "NO") + "," +
                 examen.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
                 examen.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
@@ -128,7 +132,7 @@ public class PersistenciaActividad {
         encuesta.getVersion()+","+
         (encuesta.getFechaLimite() != null ? actividad.getFechaLimite().format(formatter):"")+","+
         (encuesta.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
-        encuesta.getStatus()+","+
+        estadosPorEstudianteStr+","+
         (encuesta.esObligatoria()? "SI" : "NO")+","+
         encuesta.getTipo()+","+
         encuesta.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
@@ -176,7 +180,12 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-        Status status = Status.valueOf(datos[8]);
+            Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
+            .map(par -> par.split(":"))
+            .collect(Collectors.toMap(
+                    par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
+                    par -> Status.valueOf(par[1])
+            ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
@@ -184,7 +193,7 @@ public class PersistenciaActividad {
         String nombreCreador = datos[13]; // No se usa en la creación de la tarea porque ya se tiene el profesor
 
        // Crear la tarea con los datos cargados
-        Tarea tarea = new Tarea(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        Tarea tarea = new Tarea(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         
         // Asignar los valores que no entran al constructor directamente como fecha de inicio
         tarea.setFechaInicio(fechaInicio);
@@ -200,7 +209,12 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-        Status status = Status.valueOf(datos[8]);
+        Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
+        .map(par -> par.split(":"))
+        .collect(Collectors.toMap(
+                par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
+                par -> Status.valueOf(par[1])
+        ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
@@ -209,7 +223,7 @@ public class PersistenciaActividad {
         double calificacionObtenida = Double.parseDouble(datos[14]);
         String nombreCreador = datos[15]; // No se usa en la creación del quiz porque ya se tiene el profesor
 
-        Quiz quiz= new Quiz(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        Quiz quiz= new Quiz(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         
         // Asignar los valores que no entran al constructor directamente como calificacion obtenida y fehca de inicio
         
@@ -229,7 +243,12 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-        Status status = Status.valueOf(datos[8]);
+        Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
+        .map(par -> par.split(":"))
+        .collect(Collectors.toMap(
+                par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
+                par -> Status.valueOf(par[1])
+        ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
@@ -237,7 +256,7 @@ public class PersistenciaActividad {
         String nombreCreador = datos[13]; // No se usa en la creación del recurso porque ya se tiene el profesor
         // Crear el recurso educativo con los datos cargados
 
-        RecursoEducativo recurso = new RecursoEducativo(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, tipoRecurso, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        RecursoEducativo recurso = new RecursoEducativo(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, tipoRecurso, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
 
         // Asignar los valores que no entran al constructor directamente como fecha de inicio
 
@@ -255,7 +274,12 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-        Status status = Status.valueOf(datos[8]);
+        Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
+        .map(par -> par.split(":"))
+        .collect(Collectors.toMap(
+                par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
+                par -> Status.valueOf(par[1])
+        ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
@@ -281,7 +305,7 @@ public class PersistenciaActividad {
         List<String> respuestasAbiertas = Arrays.asList(datos[16].split(","));
 
     
-        Examen examen = new Examen(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+        Examen examen = new Examen(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
     
         // Asignar valores adicionales
         examen.setFechaInicio(fechaInicio);
@@ -301,14 +325,19 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-        Status status = Status.valueOf(datos[8]);
+        Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
+        .map(par -> par.split(":"))
+        .collect(Collectors.toMap(
+                par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
+                par -> Status.valueOf(par[1])
+        ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
         List<Actividad> actividadesSeguimientoRecomendadas = cargarActividades(datos[11], creador, formatter);
         ArrayList<PreguntaAbierta> listaPreguntas = new ArrayList<>();
        
        
-        Encuesta encuesta = new Encuesta(descripcion, nivel, objetivo, duracion, version, fechaLimite, status, obligatoria, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas, creador, listaPreguntas);
+        Encuesta encuesta = new Encuesta(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas, creador, listaPreguntas);
    
         // Asignar los valores que no entran al constructor directamente como fecha de inicio
 

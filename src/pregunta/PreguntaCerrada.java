@@ -1,3 +1,4 @@
+
 package pregunta;
 import java.util.*;
 
@@ -10,102 +11,78 @@ public class PreguntaCerrada extends Pregunta {
     private Dictionary<Opcion, String> respuesta; // La opción correcta
     private Dictionary<Opcion, String> escogida; // La opción elegida por el estudiante
 
-    // Constructor modificado para aceptar el enunciado
+    // Constructor
     public PreguntaCerrada(String enunciado) {
-        super(Tipo.Cerrada, enunciado); // Llamar al constructor de Pregunta con enunciado
+        super(Tipo.Cerrada, enunciado);
     }
 
-    public Dictionary<Opcion, String> getOpcionA() {
-        return opcionA;
-    }
-
+    // Métodos para establecer cada opción
     public void setOpcionA(Dictionary<Opcion, String> opcionA) {
         this.opcionA = opcionA;
-    }
-
-    public Dictionary<Opcion, String> getOpcionB() {
-        return opcionB;
     }
 
     public void setOpcionB(Dictionary<Opcion, String> opcionB) {
         this.opcionB = opcionB;
     }
 
-    public Dictionary<Opcion, String> getOpcionC() {
-        return opcionC;
-    }
-
     public void setOpcionC(Dictionary<Opcion, String> opcionC) {
         this.opcionC = opcionC;
-    }
-
-    public Dictionary<Opcion, String> getOpcionD() {
-        return opcionD;
     }
 
     public void setOpcionD(Dictionary<Opcion, String> opcionD) {
         this.opcionD = opcionD;
     }
 
-    public Dictionary<Opcion, String> getRespuesta() {
-        return respuesta;
-    }
-
+    // Método para definir la respuesta correcta
     public void setRespuesta(Dictionary<Opcion, String> respuesta) {
         this.respuesta = respuesta;
     }
 
-    public Dictionary<Opcion, String> getEscogida() {
-        return escogida;
+
+    // Método para seleccionar la respuesta del estudiante basado en una opción ("A", "B", "C", "D")
+    public void elegirRespuesta(String opcion) {
+        switch (opcion) {
+            case "A":
+                setEscogida(this.opcionA);
+                break;
+            case "B":
+                setEscogida(this.opcionB);
+                break;
+            case "C":
+                setEscogida(this.opcionC);
+                break;
+            case "D":
+                setEscogida(this.opcionD);
+                break;
+            default:
+                throw new IllegalArgumentException("Opción no válida.");
+        }
     }
 
+    // Método para establecer la opción seleccionada
     public void setEscogida(Dictionary<Opcion, String> escogida) {
         this.escogida = escogida;
     }
 
-    // Método modificado para aceptar un String como argumento
-    public void elegirRespuesta(String opcion) {
-        if (opcion.equals("A")) {
-            setEscogida(this.opcionA);
-        } else if (opcion.equals("B")) {
-            setEscogida(this.opcionB);
-        } else if (opcion.equals("C")) {
-            setEscogida(this.opcionC);
-        } else if (opcion.equals("D")) {
-            setEscogida(this.opcionD);
-        } else {
-            throw new IllegalArgumentException("Opción no válida.");
-        }
-    }
-
-    // Método original para seleccionar una opción utilizando Tipo
-    public void escogerOpcion(Tipo respuesta) {
-        if (respuesta.name().equals("A")) {
-            setEscogida(this.opcionA);
-        } else if (respuesta.name().equals("B")) {
-            setEscogida(this.opcionB);
-        } else if (respuesta.name().equals("C")) {
-            setEscogida(this.opcionC);
-        } else if (respuesta.name().equals("D")) {
-            setEscogida(this.opcionD);
-        }
-    }
-
-    @Override
-    public boolean esEvaluada() {
-        return escogida != null; // Verifica si se ha escogido una opción
-    }
-
+    // Verificar si la respuesta es correcta
     @Override
     public boolean esCorrecta() {
-        return escogida != null && escogida.equals(respuesta); // Compara si la opción escogida es la correcta
+        return escogida != null && escogida.equals(respuesta);
     }
 
+    // Proporcionar retroalimentación según la respuesta seleccionada
     @Override
     public String getRetroalimentacion() {
         if (escogida == null) {
             return "No se ha seleccionado ninguna opción.";
         }
-        return escogida.equals(respuesta) ? "Respuesta correcta." : "Respuesta incorrecta. La opción correcta era: " + respuesta;
+        return esCorrecta() ? "Respuesta correcta." : "Respuesta incorrecta. La opción correcta era: " + respuesta.get(Opcion.valueOf(respuesta.keys().nextElement().name()));
     }
+
+    @Override
+    public boolean esEvaluada() {
+    return escogida != null; // Verifica si se ha escogido una opción
+    }
+
 }
+

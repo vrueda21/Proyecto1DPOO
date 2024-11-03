@@ -5,6 +5,7 @@ import usuario.Estudiante;
 import usuario.Profesor;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import LPRS.LearningPath;
 
@@ -15,11 +16,11 @@ public class Quiz extends Actividad {
     private double calificacionObtenida; // Nota final obtenida por el estudiante
 
     public Quiz(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
-                double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
+                double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante, Obligatoria obligatoria, 
                 List<PreguntaCerrada> listaPreguntas, double calificacionMinima, Profesor creador, 
                 List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, "quiz", creador, 
+              fechaLimite, estadosPorEstudiante, obligatoria, "quiz", creador, 
               actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
         this.calificacionMinima = calificacionMinima;
@@ -54,8 +55,6 @@ public class Quiz extends Actividad {
         this.calificacionObtenida = calificacionObtenida;
     }
 
-    
-    
 
     
     // Método para responder al quiz completo
@@ -64,62 +63,65 @@ public class Quiz extends Actividad {
         if (estudiante == null) {
             throw new SecurityException("Se requiere un estudiante para completar el quiz.");
         }
-
-        if (this.status == Status.Exitosa) {
+    
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+        if (estadoEstudiante == Status.Completado) {
             throw new UnsupportedOperationException("El quiz ya ha sido completado exitosamente y no se puede repetir.");
         }
+    
+        System.out.println("Respuestas recibidas: " + respuesta);
 
         int preguntasCorrectas = 0; // Contador de respuestas correctas
-
-        // La respuesta del estudiante debe seguir el formato "1:A,2:B,3:C"
+    
+        // Dividir las respuestas según el formato esperado "1:A,2:B,3:C"
         String[] respuestas = respuesta.split(",");
-
+    
         for (String respuestaEstudiante : respuestas) {
             String[] partes = respuestaEstudiante.split(":");
-            int indicePregunta = Integer.parseInt(partes[0]) - 1; // Convertir índice de pregunta
-            String opcionSeleccionada = partes[1]; // Opción seleccionada por el estudiante
-
+            int indicePregunta = Integer.parseInt(partes[0]) - 1; // Convertir índice de pregunta (1-based index)
+            String opcionSeleccionada = partes[1].trim(); // Opción seleccionada por el estudiante
+    
+            System.out.println("Opcion desglosada:" + opcionSeleccionada);
+            // Asegurarse de que el índice de la pregunta sea válido
             if (indicePregunta >= 0 && indicePregunta < listaPreguntas.size()) {
                 PreguntaCerrada pregunta = listaPreguntas.get(indicePregunta);
-
-                // Marcar la opción elegida por el estudiante
-                try {
-                    pregunta.elegirRespuesta(opcionSeleccionada);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Opción no válida para la pregunta " + (indicePregunta + 1) + ". " + e.getMessage());
-                    continue; // Continuar con la siguiente pregunta
-                }
-
-                // Verificar si la respuesta es correcta
+    
+                // Marcar la opción elegida por el estudiante y verificar si es correcta
+                pregunta.elegirRespuesta(opcionSeleccionada);
                 if (pregunta.esCorrecta()) {
                     preguntasCorrectas++;
                 }
-
+    
                 // Mostrar retroalimentación de la pregunta
                 System.out.println("Pregunta " + (indicePregunta + 1) + ": " + pregunta.getRetroalimentacion());
             } else {
                 System.out.println("Índice de pregunta no válido: " + (indicePregunta + 1));
             }
         }
-
+    
         // Calcular la nota final obtenida
         calificacionObtenida = ((double) preguntasCorrectas / listaPreguntas.size()) * 100;
-
+    
         // Verificar si se alcanzó la calificación mínima para aprobar
         if (calificacionObtenida >= calificacionMinima) {
-            this.status = Status.Exitosa;
             System.out.println("El quiz fue completado exitosamente con una calificación de " + calificacionObtenida + "%.");
+            setStatusParaEstudiante(estudiante, Status.Exitosa);
         } else {
-            this.status = Status.noExitosa;
+            estadosPorEstudiante.put(estudiante, Status.noExitosa);
             System.out.println("El quiz no fue aprobado. Calificación obtenida: " + calificacionObtenida + "%.");
         }
     }
+    
 
     // Método para verificar si el quiz es exitoso (cumple la calificación mínima)
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        if (this.status == Status.Exitosa) {
+        Status estadoActual = getStatusParaEstudiante(estudiante);
+
+        if (estadoActual == Status.Exitosa || estadoActual == Status.Completado) {
             System.out.println("El quiz fue completado exitosamente por: " + estudiante.getNombre());
+            estudiante.agregarActividadCompletada(this);
+            setStatusParaEstudiante(estudiante, Status.Completado);
             return true;
         } else {
             System.out.println("El quiz no fue aprobado por: " + estudiante.getNombre());
@@ -130,7 +132,8 @@ public class Quiz extends Actividad {
     // Método para reintentar el quiz
     @Override
     public void reintentar(Estudiante estudiante) {
-        if (this.status == Status.Exitosa) {
+        Status estadoActual = getStatusParaEstudiante(estudiante);
+        if (estadoActual == Status.Exitosa) {
             throw new UnsupportedOperationException("El quiz ya fue completado exitosamente y no se puede repetir.");
         } else {
             System.out.println("El estudiante " + estudiante.getNombre() + " puede iniciar o volver a intentar el quiz.");
@@ -139,7 +142,8 @@ public class Quiz extends Actividad {
             for (PreguntaCerrada pregunta : listaPreguntas) {
                 pregunta.setEscogida(null); // Reiniciar la respuesta elegida
             }
-            this.status = Status.Incompleto;
+
+            setStatusParaEstudiante(estudiante, Status.Incompleto);
         }
     }
 

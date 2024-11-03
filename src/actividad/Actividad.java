@@ -2,24 +2,27 @@
 // FALTA ASEGURAR LO DE QUE LOS PROFESORES NO PUEDEN MODIFICAR SI YA HAY ESTUDIANTE SINSCRITOS AL LEARNIGN PATH ASOCIADO AL LEARNING PATH DONDE ESTA LA ACTIVIDAD
 
 
-package actividad;
+package actividad; 
 
-import java.time.*;
+import java.time.*; // Importar todo lo relacionado con la fecha y hora
 
-import java.util.List;
+import java.util.List; // Importar la lista de actividades previas sugeridas y de seguimiento recomendadas
+import java.util.Map;
 
-import LPRS.LearningPath;
+import LPRS.LearningPath; // Importar la clase LearningPath
 
-import java.util.ArrayList;
+import java.util.ArrayList; // Importar la lista de actividades previas sugeridas y de seguimiento recomendadas
+import java.util.HashMap;
 
-import usuario.Usuario;
-import usuario.Administrador;
-import usuario.Estudiante;
-import usuario.Profesor;
+import usuario.Usuario; // Importar la clase Usuario
+import usuario.Administrador; // Importar la clase Administrador
+import usuario.Estudiante; // Importar la clase Estudiante
+import usuario.Profesor; // Importar la clase Profesor
 
-public abstract class Actividad {
+public abstract class Actividad { // Clase abstracta Actividad
 
-    protected String descripcion;
+    // Atributos de la clase Actividad, son protected para que puedan ser accedidos por las subclases de Actividad
+    protected String descripcion; 
     protected Nivel nivelDificultad;
     protected String objetivo;
     //actividades previas
@@ -27,7 +30,7 @@ public abstract class Actividad {
     protected double version;
     protected LocalDateTime fechaLimite;
     protected LocalDateTime fechaInicio;
-    protected Status status;
+    protected Map<Estudiante, Status> estadosPorEstudiante;
     protected Obligatoria obligatoria;
     protected String tipo;
     // Atributo de creador de la actividad
@@ -38,9 +41,9 @@ public abstract class Actividad {
     // Lista de actividades de seguimiento recomendas
     protected List<Actividad> actividadesSeguimientoRecomendadas;
 
-    public Actividad(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, String tipo, Profesor creador, List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas) throws IllegalArgumentException{
+    public Actividad(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante, Obligatoria obligatoria, String tipo, Profesor creador, List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas) throws IllegalArgumentException{
 
-        this.fechaInicio=LocalDateTime.now();
+        this.fechaInicio=LocalDateTime.now(); // La fecha de inicio de la actividad sera la fecha y hora actual en la que se crea la actividad
         this.descripcion=descripcion;
         this.nivelDificultad=nivelDificultad;
         this.objetivo=objetivo;
@@ -49,20 +52,21 @@ public abstract class Actividad {
 
         if (fechaLimite.isBefore(this.fechaInicio)) {
             throw new IllegalArgumentException("La fecha límite no puede ser anterior a la fecha de inicio.");
-        }
+        } // La fecha límite no puede ser anterior a la fecha de inicio
 
         this.fechaLimite=fechaLimite;
-        this.status=Status.Incompleto;
+        this.estadosPorEstudiante= estadosPorEstudiante; // Inicializamos el mapa de estados por estudiante vacio al principio, al igual que las listas de actividades previas y de seguimiento
         this.obligatoria = obligatoria;
         this.tipo=tipo;
         this.creador = creador;
 
-        this.actividadesPreviasSugeridas = (actividadesPreviasSugeridas != null) ? actividadesPreviasSugeridas : new ArrayList<>();
-        this.actividadesSeguimientoRecomendadas = (actividadesSeguimientoRecomendadas != null) ? actividadesSeguimientoRecomendadas : new ArrayList<>();
+        this.actividadesPreviasSugeridas = (actividadesPreviasSugeridas != null) ? actividadesPreviasSugeridas : actividadesPreviasSugeridas;
+        this.actividadesSeguimientoRecomendadas = (actividadesSeguimientoRecomendadas != null) ? actividadesSeguimientoRecomendadas : actividadesSeguimientoRecomendadas;
 
 
     }
 
+    // Getters
     public String getDescripcion() {
         return descripcion;
     }
@@ -91,11 +95,19 @@ public abstract class Actividad {
         return fechaInicio;
     }
 
-    public Status getStatus() {
-        return status;
+    // Establecer el estado para un estudiante específico
+    public void setStatusParaEstudiante(Estudiante estudiante, Status status) {
+        estadosPorEstudiante.put(estudiante, status);
     }
-    public void setStatus(Status status) {
-        this.status = status;
+
+    // Obtener el estado de la actividad para un estudiante específico
+    public Status getStatusParaEstudiante(Estudiante estudiante) {
+        return estadosPorEstudiante.getOrDefault(estudiante, Status.Incompleto);
+    }
+
+    // Obtener todos los estados por estudiante (para revisión general del profesor)
+    public Map<Estudiante, Status> getEstadosPorEstudiante() {
+        return estadosPorEstudiante;
     }
 
     public Obligatoria getObligatoria() {
@@ -118,12 +130,13 @@ public abstract class Actividad {
     public Profesor getCreador() {
         return creador;
     }
+   
     // Metodos
 
 
     // Metodo de verificacion para todos los metodos relacionados con la modifiacion de actividades
 
-    private boolean tienePermisoModificar(Usuario usuario) {
+    public boolean tienePermisoModificar(Usuario usuario) { // Vamos a hacerlo publico para que se pueda acceder desde las subclases tmb
         return (usuario instanceof Profesor && usuario.equals(creador)) || usuario instanceof Administrador; // Solo profesores y administradores pueden modificar actividades
     }
 
@@ -145,79 +158,78 @@ public abstract class Actividad {
     public abstract void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa);
     // METODO 4 - REINTENTAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo reintentar, a partir de esto se podra reintentar la actividad, y se podra completar nuevamente, en caso de que se complete exitosamente, se podra evaluar nuevamente, para que haya un ciclo de reintentos hasta que se complete exitosamente para la misma actividad, antes de continuar con otra
     public abstract void reintentar(Estudiante estudiante);
-    // METODO 5 FINAL - PERSISTENCIA - GUARDAR EN BASE DE DATOS, la idea es que cada subclase de actividad tenga su propio metodo guardar en base de datos, a partir de esto se guardara la actividad en la base de datos, y se podra recuperar en caso de que se necesite, para que se pueda continuar con la actividad en otro momento, o se pueda revisar en caso de que se necesite. Su funcion principal deberia permitir que los profesores puedan revisar las respuestas que son marcadas como enviadas, para que luego ellos las evaluen, y puedan marcarlas como exitosas o no exitosas, y que los estudiantes puedan reintentar las actividades que no completaron exitosamente, y que puedan completarlas exitosamente, y que puedan ver sus calificaciones obtenidas en las actividades completadas exitosamente.
-    
+
     // Metodos para modificacion de las actividades en si
     // Método para agregar una actividad previa sugerida en la clase Actividad
     public void agregarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
         if (learningPath.verificarSiHayInscritos()) {
             throw new UnsupportedOperationException("No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path.");
-        }
+        } // No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path, per las reglas de dominio
 
-        if (tienePermisoModificar(usuario)) {
-            if (actividad != null && !actividadesPreviasSugeridas.contains(actividad)) {
-                actividadesPreviasSugeridas.add(actividad);
-                System.out.println("Actividad previa sugerida agregada por: " + usuario.getNombre());
+        if (tienePermisoModificar(usuario)) { // Solo el creador o un administrador pueden modificar actividades previas sugeridas
+            if (actividad != null && !actividadesPreviasSugeridas.contains(actividad)) { // Si la actividad no es nula y no esta en la lista de actividades previas sugeridas
+                actividadesPreviasSugeridas.add(actividad); // La agregamos
+                System.out.println("Actividad previa sugerida agregada por: " + usuario.getNombre()); // Mensaje de confirmacion
             }
         } else {
-            throw new SecurityException("Solo el creador o un administrador pueden modificar actividades previas sugeridas.");
+            throw new SecurityException("Solo el creador o un administrador pueden modificar actividades previas sugeridas."); // Mensaje de error si no se tiene permiso
         }
     }
 
 
     public void eliminarActividadPreviaSugerida(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path.");
+        if (learningPath.verificarSiHayInscritos()) { // No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path
+            throw new UnsupportedOperationException("No se pueden modificar actividades previas si hay estudiantes inscritos en el Learning Path."); // Mensaje de error
         }
 
-        if (tienePermisoModificar(usuario)) {
-            actividadesPreviasSugeridas.remove(actividad);
-            System.out.println("Actividad previa sugerida eliminada por: " + usuario.getNombre());
+        if (tienePermisoModificar(usuario)) { // Solo el creador o un administrador pueden modificar actividades previas sugeridas
+            actividadesPreviasSugeridas.remove(actividad); // Eliminar la actividad previa sugerida
+            System.out.println("Actividad previa sugerida eliminada por: " + usuario.getNombre()); // Mensaje de confirmacion
         } else {
-            throw new SecurityException("Solo el creador o un administrador pueden eliminar actividades previas sugeridas.");
+            throw new SecurityException("Solo el creador o un administrador pueden eliminar actividades previas sugeridas."); // Mensaje de error si no se tiene permiso
         }
     }
 
     // Actividades de seguimiento recomendadas
-    public void agregarActividadSeguimiento(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path.");
+    public void agregarActividadSeguimiento(Actividad actividad, Usuario usuario, LearningPath learningPath) { // Metodo para agregar una actividad de seguimiento recomendada
+        if (learningPath.verificarSiHayInscritos()) { // No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path
+            throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path."); // Mensaje de error
         }
 
-        if (tienePermisoModificar(usuario)) {
-            if (actividad != null && !actividadesSeguimientoRecomendadas.contains(actividad)) {
-                actividadesSeguimientoRecomendadas.add(actividad);
-                System.out.println("Actividad de seguimiento recomendada agregada por: " + usuario.getNombre());
+        if (tienePermisoModificar(usuario)) { // Solo el creador o un administrador pueden modificar actividades de seguimiento
+            if (actividad != null && !actividadesSeguimientoRecomendadas.contains(actividad)) { // Si la actividad no es nula y no esta en la lista de actividades de seguimiento recomendadas
+                actividadesSeguimientoRecomendadas.add(actividad); // La agregamos
+                System.out.println("Actividad de seguimiento recomendada agregada por: " + usuario.getNombre()); // Mensaje de confirmacion
             }
-        } else {
-            throw new SecurityException("Solo el creador o un administrador pueden modificar actividades de seguimiento.");
+        } else { 
+            throw new SecurityException("Solo el creador o un administrador pueden modificar actividades de seguimiento."); // Mensaje de error si no se tiene permiso
         }
     }
 
     public void eliminarActividadSeguimiento(Actividad actividad, Usuario usuario, LearningPath learningPath) {
-        if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path.");
+        if (learningPath.verificarSiHayInscritos()) { // No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path
+            throw new UnsupportedOperationException("No se pueden modificar actividades de seguimiento si hay estudiantes inscritos en el Learning Path."); // Mensaje de error
         }
 
-        if (tienePermisoModificar(usuario)) {
-            actividadesSeguimientoRecomendadas.remove(actividad);
-            System.out.println("Actividad de seguimiento recomendada eliminada por: " + usuario.getNombre());
+        if (tienePermisoModificar(usuario)) {  
+            actividadesSeguimientoRecomendadas.remove(actividad); 
+            System.out.println("Actividad de seguimiento recomendada eliminada por: " + usuario.getNombre()); // Mensaje de confirmacion
         } else {
-            throw new SecurityException("Solo el creador o un administrador pueden eliminar actividades de seguimiento.");
+            throw new SecurityException("Solo el creador o un administrador pueden eliminar actividades de seguimiento."); // Mensaje de error si no se tiene permiso
         }
     }
 
     // Métodos de modificación de atributos clave (Setters con verificación de inscripciones en Learning Path)
-    public void setDescripcion(String descripcion, LearningPath learningPath) {
+    public void setDescripcion(String descripcion, LearningPath learningPath) { // Metodo para modificar la descripcion de la actividad
         if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se puede modificar la descripción si hay estudiantes inscritos en el Learning Path.");
+            throw new UnsupportedOperationException("No se puede modificar la descripción si hay estudiantes inscritos en el Learning Path."); // No se puede modificar la descripcion si hay estudiantes inscritos en el Learning Path
         }
         this.descripcion = descripcion;
     }
 
-    public void setNivelDificultad(Nivel nivelDificultad, LearningPath learningPath) {
-        if (learningPath.verificarSiHayInscritos()) {
-            throw new UnsupportedOperationException("No se puede modificar el nivel de dificultad si hay estudiantes inscritos en el Learning Path.");
+    public void setNivelDificultad(Nivel nivelDificultad, LearningPath learningPath) { // Metodo para modificar el nivel de dificultad de la actividad
+        if (learningPath.verificarSiHayInscritos()) { // No se puede modificar el nivel de dificultad si hay estudiantes inscritos en el Learning Path
+            throw new UnsupportedOperationException("No se puede modificar el nivel de dificultad si hay estudiantes inscritos en el Learning Path."); // Mensaje de error
         }
         this.nivelDificultad = nivelDificultad;
     }
@@ -273,7 +285,7 @@ public abstract class Actividad {
         this.tipo = tipo;
     }
 
-    public boolean esObligatoria(){
+    public boolean esObligatoria(){ 
         // Retornar "SI" si la actividad es obligatoria, "NO" si es opcional
         return obligatoria.equals(Obligatoria.SI);
     }

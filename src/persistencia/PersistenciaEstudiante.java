@@ -14,19 +14,18 @@ public class PersistenciaEstudiante {
             writer.write("ESTUDIANTE," + estudiante.getNombre() + "," + estudiante.getContrasenia() + "," + estudiante.getCorreo());
             writer.newLine();
 
-            // Guardar el LearningPath actual si está siguiendo uno
+            // Guardar el título del LearningPath actual si está siguiendo uno
             if (estudiante.getLearningPathActual() != null) {
-                writer.write("LEARNING_PATH_ACTUAL:");
+                writer.write("LEARNING_PATH_ACTUAL:" + estudiante.getLearningPathActual().getTitulo());
                 writer.newLine();
-                estudiante.getLearningPathActual().guardarEnArchivo(archivo); // Usamos el método de LearningPath para guardar
             }
 
-            // Guardar lista de LearningPaths completados
+            // Guardar títulos de LearningPaths completados
             writer.write("LEARNING_PATHS_COMPLETADOS:");
-            writer.newLine();
             for (LearningPath learningPath : estudiante.listaLearningPathsCompletados) {
-                learningPath.guardarEnArchivo(archivo); // Guardar cada LearningPath completado
+                writer.write(learningPath.getTitulo() + ";");
             }
+            writer.newLine();
 
             writer.write("FIN_ESTUDIANTE");
             writer.newLine();
@@ -34,7 +33,7 @@ public class PersistenciaEstudiante {
     }
 
     // Método para cargar los estudiantes desde el archivo especificado
-    public static List<Estudiante> cargarEstudiantes(File archivo) throws IOException {
+    public static List<Estudiante> cargarEstudiantes(File archivo, Map<String, LearningPath> learningPathsDisponibles) throws IOException {
         List<Estudiante> estudiantes = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
@@ -52,13 +51,17 @@ public class PersistenciaEstudiante {
                     learningPathsCompletados = new ArrayList<>();
                 } else if (linea.startsWith("LEARNING_PATH_ACTUAL:")) {
                     if (estudianteActual != null) {
-                        LearningPath lpActual = LearningPath.cargarDeArchivo(archivo, null); // Cargar el LearningPath actual
-                        estudianteActual.setLearningPathActual(lpActual);
+                        String tituloLP = linea.split(":")[1];
+                        LearningPath lpActual = learningPathsDisponibles.get(tituloLP);
+                        if (lpActual != null) {
+                            estudianteActual.setLearningPathActual(lpActual);
+                        }
                     }
                 } else if (linea.startsWith("LEARNING_PATHS_COMPLETADOS:")) {
                     if (estudianteActual != null) {
-                        while ((linea = reader.readLine()) != null && !linea.startsWith("FIN_ESTUDIANTE")) {
-                            LearningPath lpCompletado = LearningPath.cargarDeArchivo(archivo, null); // Cargar cada LearningPath completado
+                        String[] titulosCompletados = linea.split(":")[1].split(";");
+                        for (String titulo : titulosCompletados) {
+                            LearningPath lpCompletado = learningPathsDisponibles.get(titulo);
                             if (lpCompletado != null) {
                                 learningPathsCompletados.add(lpCompletado);
                             }

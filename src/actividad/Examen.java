@@ -8,35 +8,34 @@ import usuario.Profesor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import LPRS.LearningPath;
 
-public class Examen extends Actividad 
-
-{
+public class Examen extends Actividad {
 
     protected List<Pregunta> listaPreguntas;
-    protected double calificacionMinima; // Calificación mínima para aprobar
-    private int respuestasCorrectas; // Cantidad de respuestas correctas
-    private double calificacionObtenida; // Nota final obtenida por el estudiante
-    private List<String> respuestasAbiertas; // Lista de respuestas abiertas del estudiante
+    protected double calificacionMinima;
+    private List<String> respuestasAbiertas;
+    private int respuestasCorrectas;
+    private double calificacionObtenida;
 
     public Examen(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
-                  double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, 
+                  double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante, Obligatoria obligatoria, 
                   List<Pregunta> listaPreguntas, double calificacionMinima, Profesor creador, 
                   List<Actividad> actividadesPreviasSugeridas, List<Actividad> actividadesSeguimientoRecomendadas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, "examen", creador, 
+              fechaLimite, estadosPorEstudiante, obligatoria, "examen", creador, 
               actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
         this.calificacionMinima = calificacionMinima;
-        this.calificacionObtenida = 0.0;
         this.respuestasCorrectas = 0;
+        this.calificacionObtenida = 0.0;
         this.respuestasAbiertas = new ArrayList<>();
     }
 
     // Getters
-    public List<Pregunta> getListaPreguntas() {
+    public List<Pregunta> getListaPreguntas() { 
         return listaPreguntas;
     }
 
@@ -55,9 +54,9 @@ public class Examen extends Actividad
     public List<String> getRespuestasAbiertas() {
         return respuestasAbiertas;
     }
+ 
 
     // Setters
-
     public void setListaPreguntas(List<Pregunta> listaPreguntas) {
         this.listaPreguntas = listaPreguntas;
     }
@@ -77,111 +76,94 @@ public class Examen extends Actividad
     public void setRespuestasAbiertas(List<String> respuestasAbiertas) {
         this.respuestasAbiertas = respuestasAbiertas;
     }
-    // Metodo para que el estudiante responda el examen
 
+    // Método para que el estudiante responda el examen
     @Override
     public void responder(Estudiante estudiante, String respuestas) {
         if (estudiante == null) {
             throw new SecurityException("Se requiere un estudiante para completar el examen.");
         }
-    
-        // Dividir las respuestas del estudiante
+
+        Status estadoActual = getStatusParaEstudiante(estudiante);
+        if (estadoActual == Status.Completado || estadoActual == Status.Enviada) {
+            throw new UnsupportedOperationException("El examen ya ha sido completado o enviado por este estudiante.");
+        }
+
         String[] respuestasEstudiante = respuestas.split(";");
-    
-        // Verificar si la cantidad de respuestas coincide con la cantidad de preguntas
         if (respuestasEstudiante.length != listaPreguntas.size()) {
             throw new IllegalArgumentException("La cantidad de respuestas no coincide con la cantidad de preguntas en el examen.");
         }
-    
-        // Inicializar un contador para respuestas correctas
+
         int respuestasCorrectas = 0;
-    
-        // Iterar sobre las preguntas y las respuestas del estudiante
         for (int i = 0; i < respuestasEstudiante.length; i++) {
             Pregunta pregunta = listaPreguntas.get(i);
             String respuestaEstudiante = respuestasEstudiante[i];
-    
-            // Si es una pregunta cerrada
+
             if (pregunta instanceof PreguntaCerrada) {
                 PreguntaCerrada preguntaCerrada = (PreguntaCerrada) pregunta;
                 preguntaCerrada.elegirRespuesta(respuestaEstudiante);
-    
-                // Si la respuesta es correcta, incrementar el contador de respuestas correctas
-                if (preguntaCerrada.esCorrecta()) {
+                if (preguntaCerrada.esCorrecta()) { 
                     respuestasCorrectas++;
                 }
-    
-            // Si es una pregunta abierta
             } else if (pregunta instanceof PreguntaAbierta) {
                 PreguntaAbierta preguntaAbierta = (PreguntaAbierta) pregunta;
-                // Guardar la respuesta para evaluación manual
                 respuestasAbiertas.add(respuestaEstudiante);
-                System.out.println("La pregunta abierta debe ser evaluada por un profesor.");
             }
         }
-    
-        // Guardar la cantidad de respuestas correctas como un atributo para el cálculo final
+
         this.respuestasCorrectas = respuestasCorrectas;
-    
-        // Cambiar el estado del examen a enviado
-        this.status = Status.Enviada;
+        setStatusParaEstudiante(estudiante, Status.Enviada);
         System.out.println("El examen ha sido enviado por: " + estudiante.getNombre());
     }
-    
-    // Metodo para que el profesor evalúe las preguntas abiertas del examen
 
-        @Override
-        public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
-            if (profesor == null || !profesor.equals(creador)) {
-                throw new SecurityException("Solo el profesor creador puede evaluar el examen.");
-            }
+    // Método para que el profesor evalúe las preguntas abiertas del examen
+    @Override
+    public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        if (profesor == null || !profesor.equals(creador)) {
+            throw new SecurityException("Solo el profesor creador puede evaluar el examen.");
+        }
 
-            // Verificación de si el estudiante está inscrito en el Learning Path
-            if (!learningPath.verificarSiInscrito(estudiante)) {
-                throw new IllegalArgumentException("El estudiante no está inscrito en el Learning Path para este examen.");
-            }
+        if (!learningPath.verificarSiInscrito(estudiante)) {
+            throw new IllegalArgumentException("El estudiante no está inscrito en el Learning Path para este examen.");
+        }
 
-            // Advertencia de que la calificación proporcionada será ignorada
-            System.out.println("Advertencia: la calificación proporcionada (" + calificacionObtenida + ") se ignorará en el examen, ya que se calcula automáticamente.");
+        System.out.println("Advertencia: la calificación proporcionada (" + calificacionObtenida + ") se ignorará en el examen.");
 
-            // Evaluar cada respuesta de pregunta abierta
-            for (Pregunta pregunta : listaPreguntas) {
-                if (pregunta instanceof PreguntaAbierta) {
-                    PreguntaAbierta preguntaAbierta = (PreguntaAbierta) pregunta;
-                    boolean respuestaCorrecta = preguntaAbierta.esCorrecta(); // Verificar si la respuesta es correcta
-                    if (respuestaCorrecta) {
-                        respuestasCorrectas++; // Incrementar el contador si la respuesta es correcta
-                    }
+        for (Pregunta pregunta : listaPreguntas) {
+            if (pregunta instanceof PreguntaAbierta) {
+                PreguntaAbierta preguntaAbierta = (PreguntaAbierta) pregunta;
+
+                // Evaluar la pregunta abierta, esto el profesor lo hace manualmente en la vida real, cuando se haga interfaz gráfica se puede hacer de forma automática con el metodo evaluarPorProfesor en PreguntaAbierta.
+                if (preguntaAbierta.esCorrecta()) { 
+                    respuestasCorrectas++;
+
                 }
-            }
-
-            // Calcular la calificación final después de evaluar todas las preguntas abiertas
-            calcularCalificacionFinal();
-
-            // Verificar si el examen fue aprobado o no
-            if (this.calificacionObtenida >= this.calificacionMinima) {
-                this.status = Status.Exitosa;
-                System.out.println("El examen ha sido aprobado con una nota de " + calificacionObtenida + "%.");
-            } else {
-                this.status = Status.noExitosa;
-                System.out.println("El examen no ha sido aprobado. Nota obtenida: " + calificacionObtenida + "%.");
             }
         }
 
+        calcularCalificacionFinal();
+        if (this.calificacionObtenida >= this.calificacionMinima) {
+            setStatusParaEstudiante(estudiante, Status.Exitosa);
+            System.out.println("El examen ha sido aprobado por: " + estudiante.getNombre() + " con una nota de " + calificacionObtenida + "%.");
+        } else {
+            setStatusParaEstudiante(estudiante, Status.noExitosa);
+            System.out.println("El examen no ha sido aprobado por: " + estudiante.getNombre() + ". Nota obtenida: " + calificacionObtenida + "%.");
+        }
+    }
 
     // Método para calcular la calificación final del examen
     private void calcularCalificacionFinal() {
-        int totalPreguntas = listaPreguntas.size(); // Total de preguntas en el examen
-
-        // Calcular la nota obtenida como porcentaje de respuestas correctas
+        int totalPreguntas = listaPreguntas.size();
         calificacionObtenida = ((double) respuestasCorrectas / totalPreguntas) * 100;
     }
 
-    // Método para verificar si el examen es exitoso
+    // Método para verificar si el examen es exitoso para un estudiante específico
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        if (status == Status.Exitosa) {
+        Status estadoEstudiante = getStatusParaEstudiante(estudiante);
+        if (estadoEstudiante == Status.Exitosa || estadoEstudiante == Status.Completado) {
             System.out.println("El examen fue completado exitosamente por: " + estudiante.getNombre() + " con una nota de " + calificacionObtenida + "%.");
+            estudiante.agregarActividadCompletada(this);
             return true;
         } else {
             System.out.println("El examen no ha sido completado exitosamente por: " + estudiante.getNombre());
@@ -189,22 +171,22 @@ public class Examen extends Actividad
         }
     }
 
-    // Método para reintentar el examen
+    // Método para reintentar el examen por un estudiante específico
     @Override
     public void reintentar(Estudiante estudiante) {
-        if (status == Status.Enviada || status == Status.Exitosa) {
+        Status estadoEstudiante = getStatusParaEstudiante(estudiante);
+        if (estadoEstudiante == Status.Enviada || estadoEstudiante == Status.Exitosa) {
             throw new UnsupportedOperationException("El examen ya ha sido enviado o aprobado y no se puede reintentar.");
         }
-        // Reiniciar el contador de respuestas correctas y el estado del examen
+
         respuestasCorrectas = 0;
         calificacionObtenida = 0.0;
         respuestasAbiertas.clear();
-        this.status = Status.Incompleto;
+        setStatusParaEstudiante(estudiante, Status.Incompleto);
         System.out.println("El examen ha sido reiniciado por: " + estudiante.getNombre());
-    }   
+    }
 
     // Método para agregar una pregunta al examen
-
     public void agregarPregunta(Pregunta pregunta) {
         if (pregunta == null) {
             throw new IllegalArgumentException("La pregunta no puede ser nula.");
@@ -214,18 +196,15 @@ public class Examen extends Actividad
     }
 
     // Método para eliminar una pregunta del examen
-
     public void eliminarPregunta(Pregunta pregunta) {
         if (pregunta == null) {
             throw new IllegalArgumentException("La pregunta no puede ser nula.");
         }
 
-        // Si la cantidad de preguntas es 0 o 1, no se puede eliminar más porque teiene que haber al menos una pregunta
         if (listaPreguntas.size() <= 1) {
             throw new UnsupportedOperationException("El examen debe tener al menos una pregunta.");
         }
 
         listaPreguntas.remove(pregunta);
     }
-
 }

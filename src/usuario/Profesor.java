@@ -57,8 +57,17 @@ public class Profesor extends Usuario {
 
     // Método para evaluar el examen
     public void evaluarExamen(Examen examen, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
+        // Metodo para evaluar preguntas abiertas del examen antes de evaluar el resto
+        
         examen.evaluar(this, estudiante, learningPath, calificacionObtenida, exitosa);
         System.out.println("El examen fue evaluado por el profesor: " + this.getNombre());
+    }
+
+    public void evaluarPreguntasAbiertas(PreguntaAbierta PreguntaAbierta){
+
+        PreguntaAbierta.evaluarPorProfesor(true, "Respuesta correcta");
+        System.out.println("Pregunta abierta evaluada por el profesor: " + this.getNombre());
+
     }
 
     // Método para evaluar el quiz (aunque no requiere evaluación directa, podemos verificar su estado)
@@ -101,7 +110,7 @@ public class Profesor extends Usuario {
 // Método para crear actividades en el Learning Path (Se adapto del que ya se hizo para la persistencia)
 
 public void crearActividad(LearningPath learningPath, String descripcion, Nivel nivelDificultad, String objetivo,
-                           int duracionEsperada, double version, LocalDateTime fechaLimite, Status status,
+                           int duracionEsperada, double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante,
                            Obligatoria obligatoria, String tipo, List<Actividad> actividadesPreviasSugeridas,
                            List<Actividad> actividadesSeguimientoRecomendadas, ArrayList<PreguntaAbierta> listaPreguntasAbiertas,
                            List<PreguntaCerrada> listaPreguntasCerradas, String submissionMethod,
@@ -115,7 +124,7 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
         case "TAREA":
             // Creación de la Tarea
             nuevaActividad = new Tarea(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
-                                       status, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas,
+            estadosPorEstudiante, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas,
                                        actividadesSeguimientoRecomendadas);
             break;
 
@@ -125,7 +134,7 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
                 throw new IllegalArgumentException("La encuesta debe tener preguntas abiertas.");
             }
             nuevaActividad = new Encuesta(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
-                                          status, obligatoria, actividadesPreviasSugeridas,
+            estadosPorEstudiante, obligatoria, actividadesPreviasSugeridas,
                                           actividadesSeguimientoRecomendadas, creador, listaPreguntasAbiertas);
             break;
 
@@ -135,7 +144,7 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
                 throw new IllegalArgumentException("El examen debe tener al menos una pregunta.");
             }
             nuevaActividad = new Examen(descripcion, nivelDificultad, objetivo, duracionEsperada, version,
-                                        fechaLimite, status, obligatoria, listaPreguntas, calificacionMinima,
+                                        fechaLimite, estadosPorEstudiante, obligatoria, listaPreguntas, calificacionMinima,
                                         creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
             break;
 
@@ -145,7 +154,7 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
                 throw new IllegalArgumentException("El quiz debe tener preguntas cerradas.");
             }
             nuevaActividad = new Quiz(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
-                                      status, obligatoria, listaPreguntasCerradas, calificacionMinima, creador,
+            estadosPorEstudiante, obligatoria, listaPreguntasCerradas, calificacionMinima, creador,
                                       actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
             break;
 
@@ -155,7 +164,7 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
                 throw new IllegalArgumentException("El tipo de recurso no puede estar vacío.");
             }
             nuevaActividad = new RecursoEducativo(descripcion, nivelDificultad, objetivo, duracionEsperada, version,
-                                                  fechaLimite, status, obligatoria, tipoRecurso, creador,
+                                                  fechaLimite, estadosPorEstudiante, obligatoria, tipoRecurso, creador,
                                                   actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
             break;
 

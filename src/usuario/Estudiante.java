@@ -67,7 +67,7 @@ public class Estudiante extends Usuario{
 
     public void marcarTareaCompletada(Tarea tarea, String submissionMethod){
 
-        tarea.setStatus(Status.Enviada);
+        tarea.setStatusParaEstudiante(this, Status.Enviada);
         listaActividadesCompletadas.add(this.actividadActual);
         listaActividadesPorCompletar.removeFirst();
         this.actividadActual=null;
@@ -156,4 +156,10 @@ public class Estudiante extends Usuario{
 
     }
     
+
+    // Agregar actividades completadas
+
+    public void agregarActividadCompletada(Actividad actividad){
+        listaActividadesCompletadas.add(actividad);
+    }
 }

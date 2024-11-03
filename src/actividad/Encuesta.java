@@ -7,16 +7,17 @@ import LPRS.LearningPath;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Encuesta extends Actividad {
 
     private ArrayList<PreguntaAbierta> listaPreguntas; // Lista de preguntas abiertas de la encuesta
 
     public Encuesta(String descripcion, Nivel nivelDificultad, String objetivo, int duracionEsperada, 
-                    double version, LocalDateTime fechaLimite, Status status, Obligatoria obligatoria, List<Actividad>actividadesPreviasSugeridas, List<Actividad>actividadesSeguimientoRecomendadas,
+                    double version, LocalDateTime fechaLimite, Map<Estudiante, Status> estadosPorEstudiante, Obligatoria obligatoria, List<Actividad>actividadesPreviasSugeridas, List<Actividad>actividadesSeguimientoRecomendadas,
                     Profesor creador, ArrayList<PreguntaAbierta> listaPreguntas) {
         super(descripcion, nivelDificultad, objetivo, duracionEsperada, version, 
-              fechaLimite, status, obligatoria, "encuesta", creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
+              fechaLimite, estadosPorEstudiante, obligatoria, "encuesta", creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
     }
 
@@ -33,7 +34,9 @@ public class Encuesta extends Actividad {
             throw new SecurityException("Un estudiante debe responder la encuesta.");
         }
 
-        if (this.status == Status.Completado) {
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+
+        if (estadoEstudiante == Status.Completado) {
             throw new UnsupportedOperationException("La encuesta ya ha sido completada.");
         }
 
@@ -49,15 +52,18 @@ public class Encuesta extends Actividad {
             pregunta.setRespuestaEstudiante(respuestasEstudiante[i]); // Asignar la respuesta del estudiante
         }
 
-        this.status = Status.Completado; // Cambiar el estado de la encuesta a completada
+        estadosPorEstudiante.put(estudiante, Status.Completado); // Cambiar el estado de la encuesta a completada
         System.out.println("La encuesta ha sido completada por: " + estudiante.getNombre());
     }
 
     // Método para verificar si la encuesta es exitosa (si fue completada)
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        if (this.status == Status.Completado) {
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+        if (estadoEstudiante == Status.Completado || estadoEstudiante == Status.Exitosa) {
+            
             System.out.println("La encuesta ha sido completada exitosamente por: " + estudiante.getNombre());
+            estudiante.agregarActividadCompletada(this);
             return true;
         } else {
             System.out.println("La encuesta no ha sido completada por: " + estudiante.getNombre());
