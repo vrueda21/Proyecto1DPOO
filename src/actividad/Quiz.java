@@ -24,7 +24,7 @@ public class Quiz extends Actividad {
               actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);
         this.listaPreguntas = listaPreguntas;
         this.calificacionMinima = calificacionMinima;
-        this.calificacionObtenida = 0.0;
+        this.calificacionObtenida = 0.0; // Inicializar la calificación obtenida en 0, ya que no se ha completado, cuando se haga la persistencia la idea es que se cargue la calificación obtenida con el setter en vez del constructor 
     }
 
     // Getters 
@@ -64,48 +64,48 @@ public class Quiz extends Actividad {
             throw new SecurityException("Se requiere un estudiante para completar el quiz.");
         }
     
-        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante); // Obtener el estado del estudiante
         if (estadoEstudiante == Status.Completado) {
             throw new UnsupportedOperationException("El quiz ya ha sido completado exitosamente y no se puede repetir.");
         }
     
-        System.out.println("Respuestas recibidas: " + respuesta);
+        System.out.println("Respuestas recibidas: " + respuesta); // Mostrar las respuestas recibidas
 
         int preguntasCorrectas = 0; // Contador de respuestas correctas
     
-        // Dividir las respuestas según el formato esperado "1:A,2:B,3:C"
-        String[] respuestas = respuesta.split(",");
+        // Dividir las respuestas según el formato esperado "1:A,2:B,3:C", esto se le pide al estudiante
+        String[] respuestas = respuesta.split(","); // Separar las respuestas por coma con el formato "índice:respuesta", el split devuelve un arreglo de Strings
     
-        for (String respuestaEstudiante : respuestas) {
-            String[] partes = respuestaEstudiante.split(":");
-            int indicePregunta = Integer.parseInt(partes[0]) - 1; // Convertir índice de pregunta (1-based index)
-            String opcionSeleccionada = partes[1].trim(); // Opción seleccionada por el estudiante
+        for (String respuestaEstudiante : respuestas) { // Iterar sobre cada respuesta
+            String[] partes = respuestaEstudiante.split(":"); // Separar el índice de la respuesta ya que solo nos interesa la respuesta
+            int indicePregunta = Integer.parseInt(partes[0]) - 1; // Convertir índice de pregunta (1-based index) con paresInt que convierte un String a un entero
+            String opcionSeleccionada = partes[1].trim(); // Opción seleccionada por el estudiante, el trim lo que hace es eliminar los espacios en blanco al inicio y al final de la cadena
     
-            System.out.println("Opcion desglosada:" + opcionSeleccionada);
+            System.out.println("Opcion desglosada:" + opcionSeleccionada); // Mostrar la opción seleccionada por el estudiante
             // Asegurarse de que el índice de la pregunta sea válido
             if (indicePregunta >= 0 && indicePregunta < listaPreguntas.size()) {
                 PreguntaCerrada pregunta = listaPreguntas.get(indicePregunta);
     
                 // Marcar la opción elegida por el estudiante y verificar si es correcta
-                pregunta.elegirRespuesta(opcionSeleccionada);
-                if (pregunta.esCorrecta()) {
-                    preguntasCorrectas++;
+                pregunta.elegirRespuesta(opcionSeleccionada); // Marcar la respuesta elegida por el estudiante con el metodo de pregunta
+                if (pregunta.esCorrecta()) { // Verificar si la respuesta es correcta
+                    preguntasCorrectas++; // Incrementar el contador de respuestas correctas
                 }
     
                 // Mostrar retroalimentación de la pregunta
-                System.out.println("Pregunta " + (indicePregunta + 1) + ": " + pregunta.getRetroalimentacion());
+                System.out.println("Pregunta " + (indicePregunta + 1) + ": " + pregunta.getRetroalimentacion()); // Mostrar la retroalimentación de la pregunta
             } else {
-                System.out.println("Índice de pregunta no válido: " + (indicePregunta + 1));
+                System.out.println("Índice de pregunta no válido: " + (indicePregunta + 1)); // Mostrar mensaje de error si el índice de pregunta no es válido
             }
         }
     
         // Calcular la nota final obtenida
-        calificacionObtenida = ((double) preguntasCorrectas / listaPreguntas.size()) * 100;
+        calificacionObtenida = ((double) preguntasCorrectas / listaPreguntas.size()) * 100; // Calcular la calificación obtenida en base a las respuestas correctas
     
         // Verificar si se alcanzó la calificación mínima para aprobar
         if (calificacionObtenida >= calificacionMinima) {
             System.out.println("El quiz fue completado exitosamente con una calificación de " + calificacionObtenida + "%.");
-            setStatusParaEstudiante(estudiante, Status.Exitosa);
+            setStatusParaEstudiante(estudiante, Status.Completado); // Cambiar el estado del estudiante a completado, ya que aprobó el quiz 
         } else {
             estadosPorEstudiante.put(estudiante, Status.noExitosa);
             System.out.println("El quiz no fue aprobado. Calificación obtenida: " + calificacionObtenida + "%.");
@@ -116,34 +116,34 @@ public class Quiz extends Actividad {
     // Método para verificar si el quiz es exitoso (cumple la calificación mínima)
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        Status estadoActual = getStatusParaEstudiante(estudiante);
+        Status estadoActual = getStatusParaEstudiante(estudiante); // Obtener el estado del estudiante
 
-        if (estadoActual == Status.Exitosa || estadoActual == Status.Completado) {
+        if (estadoActual == Status.Exitosa || estadoActual == Status.Completado) { // Si el estado es exitoso o completado, realmente exitoso y completado son lo mismo para nostros a fin de cuentas, el estudiante aprobó el quiz, por lo que consideramos ambos casos para no confundir al usuario de todas maneras
             System.out.println("El quiz fue completado exitosamente por: " + estudiante.getNombre());
-            estudiante.agregarActividadCompletada(this);
-            setStatusParaEstudiante(estudiante, Status.Completado);
-            return true;
+            estudiante.agregarActividadCompletada(this); // Agregar el quiz a la lista de actividades completadas del estudiante
+            setStatusParaEstudiante(estudiante, Status.Completado); // Cambiar el estado del estudiante a completado
+            return true; // El quiz fue exitoso
         } else {
-            System.out.println("El quiz no fue aprobado por: " + estudiante.getNombre());
-            return false;
+            System.out.println("El quiz no fue aprobado por: " + estudiante.getNombre()); // Mensaje de confirmación
+            return false; // El quiz no fue exitoso
         }
     }
 
     // Método para reintentar el quiz
     @Override
     public void reintentar(Estudiante estudiante) {
-        Status estadoActual = getStatusParaEstudiante(estudiante);
-        if (estadoActual == Status.Exitosa) {
-            throw new UnsupportedOperationException("El quiz ya fue completado exitosamente y no se puede repetir.");
-        } else {
-            System.out.println("El estudiante " + estudiante.getNombre() + " puede iniciar o volver a intentar el quiz.");
+        Status estadoActual = getStatusParaEstudiante(estudiante); // Obtener el estado del estudiante
+        if (estadoActual == Status.Exitosa || estadoActual == Status.Completado) { // Si el estado es exitoso o completado
+            throw new UnsupportedOperationException("El quiz ya fue completado exitosamente y no se puede repetir."); // No se puede reintentar si ya se completó
+        } else { // Si el estado es incompleto o no exitoso
+            System.out.println("El estudiante " + estudiante.getNombre() + " puede iniciar o volver a intentar el quiz."); // Mensaje de confirmación
             // Reiniciar el estado del quiz para reintento
-            this.calificacionObtenida = 0.0;
+            this.calificacionObtenida = 0.0; // Reiniciar la calificación obtenida
             for (PreguntaCerrada pregunta : listaPreguntas) {
                 pregunta.setEscogida(null); // Reiniciar la respuesta elegida
             }
 
-            setStatusParaEstudiante(estudiante, Status.Incompleto);
+            setStatusParaEstudiante(estudiante, Status.Incompleto); // Cambiar el estado del estudiante a incompleto
         }
     }
 

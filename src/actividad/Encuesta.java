@@ -34,16 +34,16 @@ public class Encuesta extends Actividad {
             throw new SecurityException("Un estudiante debe responder la encuesta.");
         }
 
-        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante); // Obtener el estado del estudiante
 
         if (estadoEstudiante == Status.Completado) {
-            throw new UnsupportedOperationException("La encuesta ya ha sido completada.");
+            throw new UnsupportedOperationException("La encuesta ya ha sido completada."); // No se puede responder si ya se completó
         }
 
         // Simulación de respuestas: se espera una lista de respuestas separadas por comas (una por cada pregunta)
         String[] respuestasEstudiante = respuesta.split(",");
         if (respuestasEstudiante.length != listaPreguntas.size()) {
-            throw new IllegalArgumentException("Debe responder a todas las preguntas de la encuesta.");
+            throw new IllegalArgumentException("Debe responder a todas las preguntas de la encuesta."); // Debe responder a todas las preguntas
         }
 
         // Guardar las respuestas en las preguntas abiertas
@@ -53,20 +53,20 @@ public class Encuesta extends Actividad {
         }
 
         estadosPorEstudiante.put(estudiante, Status.Completado); // Cambiar el estado de la encuesta a completada
-        System.out.println("La encuesta ha sido completada por: " + estudiante.getNombre());
-    }
+        System.out.println("La encuesta ha sido completada por: " + estudiante.getNombre()); // Mensaje de confirmación
+    } 
 
     // Método para verificar si la encuesta es exitosa (si fue completada)
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
-        if (estadoEstudiante == Status.Completado || estadoEstudiante == Status.Exitosa) {
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante); // Obtener el estado del estudiante
+        if (estadoEstudiante == Status.Completado || estadoEstudiante == Status.Exitosa) { // Si el estado es completado o exitoso
             
-            System.out.println("La encuesta ha sido completada exitosamente por: " + estudiante.getNombre());
+            System.out.println("La encuesta ha sido completada exitosamente por: " + estudiante.getNombre()); // Mensaje de confirmación
             estudiante.agregarActividadCompletada(this);
             return true;
         } else {
-            System.out.println("La encuesta no ha sido completada por: " + estudiante.getNombre());
+            System.out.println("La encuesta no ha sido completada por: " + estudiante.getNombre()); // Mensaje de confirmación
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class Encuesta extends Actividad {
     @Override
     public void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa) {
         // No se necesita implementación para Encuesta
-        throw new UnsupportedOperationException("Las encuestas no requieren evaluación.");
+        throw new UnsupportedOperationException("Las encuestas no requieren evaluación."); 
     }
 
     // Método de reintentar (no aplica para Encuesta)
@@ -107,6 +107,6 @@ public class Encuesta extends Actividad {
             throw new UnsupportedOperationException("La encuesta debe tener al menos una pregunta.");
         }
 
-        listaPreguntas.remove(pregunta);
+        listaPreguntas.remove(pregunta); // Eliminar la pregunta
     }
 }

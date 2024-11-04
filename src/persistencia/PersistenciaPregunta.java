@@ -13,40 +13,40 @@ import pregunta.PreguntaCerrada;
 public class PersistenciaPregunta {
     // Método auxiliar para cargar las preguntas de un quiz o examen
 
-    public static List<Pregunta> cargarListaPreguntas(String preguntasStr) {
-        List<Pregunta> listaPreguntas = new ArrayList<>();
+    public static List<Pregunta> cargarListaPreguntas(String preguntasStr) { // Método para cargar una lista de preguntas a partir de una cadena de texto
+        List<Pregunta> listaPreguntas = new ArrayList<>(); // Se crea una lista de preguntas
     
-        if (preguntasStr == null || preguntasStr.isEmpty()) {
-            return listaPreguntas;
+        if (preguntasStr == null || preguntasStr.isEmpty()) { // Si la cadena de texto de preguntas es nula o vacía
+            return listaPreguntas; // Retorna una lista vacía si no hay preguntas 
         }
     
-        String[] preguntasData = preguntasStr.split(";");
-        for (String preguntaStr : preguntasData) {
-            if (preguntaStr.startsWith("Cerrada:")) {
-                String preguntaCerradaStr = preguntaStr.substring("Cerrada:".length());
-                listaPreguntas.addAll(cargarPreguntasCerradas(preguntaCerradaStr));
-            } else if (preguntaStr.startsWith("Abierta:")) {
-                String preguntaAbiertaStr = preguntaStr.substring("Abierta:".length());
-                listaPreguntas.addAll(cargarPreguntasAbiertas(preguntaAbiertaStr));
+        String[] preguntasData = preguntasStr.split(";"); // Divide cada pregunta usando ';'
+        for (String preguntaStr : preguntasData) { // Se recorre cada pregunta
+            if (preguntaStr.startsWith("Cerrada:")) { // Si la pregunta es cerrada
+                String preguntaCerradaStr = preguntaStr.substring("Cerrada:".length()); // Se obtiene la cadena de texto de la pregunta cerrada
+                listaPreguntas.addAll(cargarPreguntasCerradas(preguntaCerradaStr)); // Se añaden las preguntas cerradas a la lista de preguntas
+            } else if (preguntaStr.startsWith("Abierta:")) { // Si la pregunta es abierta
+                String preguntaAbiertaStr = preguntaStr.substring("Abierta:".length()); // Se obtiene la cadena de texto de la pregunta abierta
+                listaPreguntas.addAll(cargarPreguntasAbiertas(preguntaAbiertaStr)); // Se añaden las preguntas abiertas a la lista de preguntas
             } else {
-                System.out.println("Tipo de pregunta desconocido o formato incorrecto: " + preguntaStr);
+                System.out.println("Tipo de pregunta desconocido o formato incorrecto: " + preguntaStr); // Se imprime un mensaje de error
             }
         }
     
-        return listaPreguntas;
+        return listaPreguntas; // Retorna la lista de preguntas
     }
     
     
     // Método para cargar una lista de preguntas cerradas a partir de una cadena de texto
-    public static List<PreguntaCerrada> cargarPreguntasCerradas(String preguntasStr) {
-        List<PreguntaCerrada> listaPreguntas = new ArrayList<>();
+    public static List<PreguntaCerrada> cargarPreguntasCerradas(String preguntasStr) { 
+        List<PreguntaCerrada> listaPreguntas = new ArrayList<>(); // Se crea una lista de preguntas cerradas
     
         if (preguntasStr == null || preguntasStr.isEmpty()) {
             return listaPreguntas; // Retorna una lista vacía si no hay preguntas
         }
     
         // Dividir cada pregunta usando ';'
-        String[] preguntasData = preguntasStr.split(";");
+        String[] preguntasData = preguntasStr.split(";"); 
         for (String preguntaStr : preguntasData) {
             // Divide cada componente de la pregunta usando '|'
             String[] partesPregunta = preguntaStr.split("\\|");
@@ -64,7 +64,7 @@ public class PersistenciaPregunta {
             Dictionary<Opcion, String> opcionD = new Hashtable<>();
             Dictionary<Opcion, String> respuestaCorrecta = new Hashtable<>();
     
-            // Iterar sobre las partes de la pregunta para asignar opciones y respuesta
+            // Iterar sobre las partes de la pregunta para asignar opciones y respuestaaaaaaa
             for (int i = 1; i < partesPregunta.length; i++) {
                 String parte = partesPregunta[i];
     

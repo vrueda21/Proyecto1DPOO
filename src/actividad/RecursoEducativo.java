@@ -23,7 +23,7 @@ public class RecursoEducativo extends Actividad {
     }
 
     public String getTipoRecurso() {
-        return tipoRecurso;
+        return tipoRecurso; 
     }
 
     // Método para responder al recurso educativo (marcarlo como revisado)
@@ -31,18 +31,18 @@ public class RecursoEducativo extends Actividad {
     public void responder(Estudiante estudiante, String respuesta) {
 
 
-        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
-        if (estudiante == null) {
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante); // Obtener el estado del estudiante
+        if (estudiante == null) { // Verificar que el estudiante no sea nulo
             throw new SecurityException("Se requiere un estudiante para marcar el recurso educativo como revisado.");
         }
         
-        if (estadoEstudiante == Status.Completado) {
+        if (estadoEstudiante == Status.Completado || estadoEstudiante == Status.Exitosa) { // Verificar que el recurso no haya sido completado
             throw new UnsupportedOperationException("El recurso educativo ya ha sido completado exitosamente.");
         }
 
-        // La respuesta válida es "visto" para marcar el recurso como revisado
-        if ("visto".equalsIgnoreCase(respuesta)) {
-            setStatusParaEstudiante(estudiante, Status.Completado);
+        // La respuesta válida es "visto" para marcar el recurso como revisado, esto se le indica al estudiante
+        if ("visto".equalsIgnoreCase(respuesta)) { // Verificar que la respuesta sea válida
+            setStatusParaEstudiante(estudiante, Status.Completado); // Marcar el recurso como revisado
             System.out.println("El recurso educativo fue marcado como revisado por: " + estudiante.getNombre());
         } else {
             System.out.println("Respuesta no válida para Recurso Educativo. Para marcar como revisado, responde 'visto'.");
@@ -52,15 +52,15 @@ public class RecursoEducativo extends Actividad {
     // Método para verificar si el recurso educativo es exitoso (revisado)
     @Override
     public boolean esExitosa(Estudiante estudiante) {
-        Status estadoEstudiante = estadosPorEstudiante.get(estudiante);
+        Status estadoEstudiante = estadosPorEstudiante.get(estudiante); // Obtener el estado del estudiante
         if (estadoEstudiante == Status.Exitosa || estadoEstudiante == Status.Completado) {
-            System.out.println("El recurso educativo fue completado exitosamente por: " + estudiante.getNombre());
-            estudiante.agregarActividadCompletada(this);
-            return true;
+            System.out.println("El recurso educativo fue completado exitosamente por: " + estudiante.getNombre()); // Mostrar mensaje de éxito
+            estudiante.agregarActividadCompletada(this); // Agregar a actividades completadas pro el estudiante
+            return true;       
             // Agregar a actividades completadas pro el estudiante
         } else {
             System.out.println("El recurso educativo no ha sido completado por: " + estudiante.getNombre());
-            return false;
+            return false; // Mostrar mensaje de fracaso
         }
     }
 

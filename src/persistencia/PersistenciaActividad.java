@@ -31,9 +31,9 @@ public class PersistenciaActividad {
     // Metodo auxiliar guardar actividades 
 
     public static void guardarActividad(Actividad actividad, BufferedWriter writer) throws IOException {
-        String estadosPorEstudianteStr = actividad.getEstadosPorEstudiante().entrySet().stream()
-            .map(entry -> entry.getKey().getCorreo() + ":" + entry.getValue().name())
-            .collect(Collectors.joining(";"));
+        String estadosPorEstudianteStr = actividad.getEstadosPorEstudiante().entrySet().stream() // Se sacan los estados por estudiante, el entry set es para sacar los valores del mapa y el stream para hacer el recorrido de los valores
+            .map(entry -> entry.getKey().getCorreo() + ":" + entry.getValue().name()) // Se mapea el correo y el estado del estudiante, el entry es para sacar el valor del mapa y el getKey para sacar el correo y el getValue para sacar el estado. Resumiendo esta linea se saca el correo y el estado del estudiante
+            .collect(Collectors.joining(";"));  // Se juntan los valores con un ; para separarlos
     if (actividad instanceof Tarea)
     {
         Tarea tarea = (Tarea) actividad;
@@ -46,8 +46,8 @@ public class PersistenciaActividad {
         (tarea.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         estadosPorEstudianteStr+","+ 
         (tarea.esObligatoria()? "SI" : "NO")+","+ 
-        tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
-        tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
+        tarea.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+ // Se sacan las actividades previas sugeridas y se juntan con una coma
+        tarea.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+ // Se sacan las actividades de seguimiento recomendadas y se juntan con una coma
         tarea.getSubmissionMethod()+","+ 
         tarea.getCreador().getNombre());
     } 
@@ -64,9 +64,9 @@ public class PersistenciaActividad {
         (quiz.getFechaInicio() != null ? actividad.getFechaInicio().format(formatter):"")+","+
         estadosPorEstudianteStr+","+
         (quiz.esObligatoria()? "SI" : "NO")+","+
-        quiz.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
+        quiz.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+ 
         quiz.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(","))+","+
-        quiz.getListaPreguntas().stream().map(Pregunta::getEnunciado).collect(Collectors.joining(","))+","+
+        quiz.getListaPreguntas().stream().map(Pregunta::getEnunciado).collect(Collectors.joining(","))+","+ // Se sacan las preguntas y se juntan con una coma
         quiz.getCalificacionMinima()+","+
         quiz.getCalificacionObtenida()+","+
         quiz.getCreador().getNombre());
@@ -102,16 +102,16 @@ public class PersistenciaActividad {
                 (examen.esObligatoria() ? "SI" : "NO") + "," +
                 examen.getActividadesPreviasSugeridas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
                 examen.getActividadesSeguimientoRecomendadas().stream().map(Actividad::getDescripcion).collect(Collectors.joining(",")) + "," +
-                examen.getListaPreguntas().stream()
-                        .map(pregunta -> {
-                            if (pregunta instanceof PreguntaCerrada) {
-                                return "Cerrada|" + pregunta.getEnunciado();
-                            } else if (pregunta instanceof PreguntaAbierta) {
-                                return "Abierta|" + pregunta.getEnunciado();
+                examen.getListaPreguntas().stream() // Se sacan las preguntas y se juntan con una coma
+                        .map(pregunta -> { // Se mapea la pregunta
+                            if (pregunta instanceof PreguntaCerrada) { // Si la pregunta es cerrada
+                                return "Cerrada|" + pregunta.getEnunciado(); // Se retorna cerrada y el enunciado de la pregunta
+                            } else if (pregunta instanceof PreguntaAbierta) { // Si la pregunta es abierta
+                                return "Abierta|" + pregunta.getEnunciado(); // Se retorna abierta y el enunciado de la pregunta
                             }
                             return "";
                         })
-                        .collect(Collectors.joining(";")) + "," +
+                        .collect(Collectors.joining(";")) + "," + // Se juntan las preguntas con ;
                 examen.getCalificacionMinima() + "," +
                 examen.getRespuestasCorrectas() + "," +
                 examen.getCalificacionObtenida() + "," +
@@ -146,14 +146,14 @@ public class PersistenciaActividad {
 
 // Método auxiliar para determinar el tipo de actividad y cargarla
     public static Actividad cargarActividad(String linea, Profesor creador, DateTimeFormatter formatter) {
-        String[] datos = linea.split(",");
-        System.out.println("Datos desglosados para la línea: " + linea);
-        for (int i = 0; i < datos.length; i++) {
-            System.out.println("datos[" + i + "]: " + datos[i]);
+        String[] datos = linea.split(","); // Se separan los datos por coma, ya que los datos que se guardaron los separamos con la coma
+        System.out.println("Datos desglosados para la línea: " + linea); // Se imprime los datos desglosados 
+        for (int i = 0; i < datos.length; i++) { // Se recorre los datos
+            System.out.println("datos[" + i + "]: " + datos[i]); // Se imprime los datos
         }
-        String tipoActividad = datos[0];
+        String tipoActividad = datos[0]; // Se obtiene el tipo de actividad
 
-        switch (tipoActividad) {
+        switch (tipoActividad) { // Se hace un switch para determinar el tipo de actividad y dependiendo de eso cargarla
             case "Tarea":
                 return cargarTarea(datos, creador, formatter);
             case "Quiz":
@@ -180,11 +180,11 @@ public class PersistenciaActividad {
         double version = Double.parseDouble(datos[5]);
         LocalDateTime fechaLimite = LocalDateTime.parse(datos[6], formatter);
         LocalDateTime fechaInicio = LocalDateTime.parse(datos[7], formatter);
-            Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";"))
-            .map(par -> par.split(":"))
-            .collect(Collectors.toMap(
+            Map<Estudiante, Status> estadosPorEstudiante = Arrays.stream(datos[8].split(";")) // Se sacan los estados por estudiante, el stream es para hacer el recorrido de los valores
+            .map(par -> par.split(":")) // Se mapea el par y se separa por :
+            .collect(Collectors.toMap( // Se juntan los valores en un mapa
                     par -> new Estudiante("", "", par[0]),  // Crea Estudiante con solo correo
-                    par -> Status.valueOf(par[1])
+                    par -> Status.valueOf(par[1]) // Se obtiene el estado del estudiante
             ));
         Obligatoria obligatoria = datos[9].equals("SI") ? Obligatoria.SI : Obligatoria.NO;
         List<Actividad> actividadesPreviasSugeridas = cargarActividades(datos[10], creador, formatter);
@@ -286,23 +286,23 @@ public class PersistenciaActividad {
     
         // Cargar lista de preguntas de distintos tipos
         List<Pregunta> listaPreguntas = new ArrayList<>();
-        String[] preguntasData = datos[12].split(";"); // Asume que cada pregunta está separada por ;
-        for (String preguntaData : preguntasData) {
-            if (preguntaData.startsWith("Cerrada|")) {
-                String preguntaCerradaStr = preguntaData.substring("Cerrada|".length());
-                List<PreguntaCerrada> preguntasCerradas = PersistenciaPregunta.cargarPreguntasCerradas(preguntaCerradaStr);
-                listaPreguntas.addAll(preguntasCerradas);
-            } else if (preguntaData.startsWith("Abierta|")) {
-                String preguntaAbiertaStr = preguntaData.substring("Abierta|".length());
-                List<PreguntaAbierta> preguntasAbiertas = PersistenciaPregunta.cargarPreguntasAbiertas(preguntaAbiertaStr);
-                listaPreguntas.addAll(preguntasAbiertas);
+        String[] preguntasData = datos[12].split(";"); // Asume que cada pregunta está separada por ; ya que asi lo definimos en el metodo de guardar
+        for (String preguntaData : preguntasData) { // Se recorre las preguntas
+            if (preguntaData.startsWith("Cerrada|")) { // Si la pregunta es cerrada
+                String preguntaCerradaStr = preguntaData.substring("Cerrada|".length()); // Se saca la pregunta cerrada
+                List<PreguntaCerrada> preguntasCerradas = PersistenciaPregunta.cargarPreguntasCerradas(preguntaCerradaStr); // Se cargan las preguntas cerradas
+                listaPreguntas.addAll(preguntasCerradas); // Se agregan las preguntas cerradas a la lista de preguntas
+            } else if (preguntaData.startsWith("Abierta|")) { // Si la pregunta es abierta
+                String preguntaAbiertaStr = preguntaData.substring("Abierta|".length()); // Se saca la pregunta abierta
+                List<PreguntaAbierta> preguntasAbiertas = PersistenciaPregunta.cargarPreguntasAbiertas(preguntaAbiertaStr); // Se cargan las preguntas abiertas
+                listaPreguntas.addAll(preguntasAbiertas); // Se agregan las preguntas abiertas a la lista de preguntas
             }
         }
     
-        double calificacionMinima = Double.parseDouble(datos[13]);
-        int respuestasCorrectas = Integer.parseInt(datos[14]);
-        double calificacionObtenida = Double.parseDouble(datos[15]);
-        List<String> respuestasAbiertas = Arrays.asList(datos[16].split(","));
+        double calificacionMinima = Double.parseDouble(datos[13]);  // Se saca la calificacion minima
+        int respuestasCorrectas = Integer.parseInt(datos[14]); // Se sacan las respuestas correctas
+        double calificacionObtenida = Double.parseDouble(datos[15]); // Se sacan las respuestas correctas
+        List<String> respuestasAbiertas = Arrays.asList(datos[16].split(",")); // Se sacan las respuestas abiertas y se juntan con una coma
 
     
         Examen examen = new Examen(descripcion, nivel, objetivo, duracion, version, fechaLimite, estadosPorEstudiante, obligatoria, listaPreguntas, calificacionMinima, creador, actividadesPreviasSugeridas, actividadesSeguimientoRecomendadas);

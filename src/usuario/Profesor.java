@@ -116,12 +116,14 @@ public void crearActividad(LearningPath learningPath, String descripcion, Nivel 
                            List<PreguntaCerrada> listaPreguntasCerradas, String submissionMethod,
                            double calificacionMinima, String tipoRecurso, List<Pregunta> listaPreguntas) {
 
-    Actividad nuevaActividad;
+    Actividad nuevaActividad; // Actividad a crear
 
-    Profesor creador = this;
+    Profesor creador = this; // Profesor creador de la actividad
 
-    switch (tipo.toUpperCase()) {
-        case "TAREA":
+    switch (tipo.toUpperCase()) { // Convertir a mayúsculas para evitar errores de comparación
+
+        // El case se usa para verificar el tipo de actividad y crear la instancia correspondiente, más facil que un pocoton de ifs
+        case "TAREA": 
             // Creación de la Tarea
             nuevaActividad = new Tarea(descripcion, nivelDificultad, objetivo, duracionEsperada, version, fechaLimite,
             estadosPorEstudiante, obligatoria, submissionMethod, creador, actividadesPreviasSugeridas,

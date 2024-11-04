@@ -24,13 +24,13 @@ public class Administrador extends Usuario{
 
     public void crearProfesor(String nombre, String contrasenia, String correo){
 
-        Profesor profesor = new Profesor(nombre, contrasenia, correo, null, null);
+        Profesor profesor = new Profesor(nombre, contrasenia, correo, null, null); // Se crea un profesor con los datos ingresados
 
     }
 
     public void crearEstudiante(String nombre, String contrasenia, String correo){
 
-        Estudiante estudiante = new Estudiante(nombre, contrasenia, correo);
+        Estudiante estudiante = new Estudiante(nombre, contrasenia, correo); // Se crea un estudiante con los datos ingresados
 
     }
 

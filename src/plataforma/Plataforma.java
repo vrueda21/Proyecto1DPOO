@@ -6,6 +6,8 @@ import java.time.*;
 import java.util.*;
 import LPRS.LearningPath;
 
+// ESTA CLASE NO IMPORTA PARA LA ENTREGA 2, ESTA LA TENEMOS DE BASE PARA LA PROXIMA ENTREGA, IGNORAR!
+
 public class Plataforma {
 
     private static Plataforma plataforma = new Plataforma();

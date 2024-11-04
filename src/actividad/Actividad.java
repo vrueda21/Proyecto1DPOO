@@ -8,12 +8,7 @@ import java.time.*; // Importar todo lo relacionado con la fecha y hora
 
 import java.util.List; // Importar la lista de actividades previas sugeridas y de seguimiento recomendadas
 import java.util.Map;
-
 import LPRS.LearningPath; // Importar la clase LearningPath
-
-import java.util.ArrayList; // Importar la lista de actividades previas sugeridas y de seguimiento recomendadas
-import java.util.HashMap;
-
 import usuario.Usuario; // Importar la clase Usuario
 import usuario.Administrador; // Importar la clase Administrador
 import usuario.Estudiante; // Importar la clase Estudiante
@@ -158,6 +153,8 @@ public abstract class Actividad { // Clase abstracta Actividad
     public abstract void evaluar(Profesor profesor, Estudiante estudiante, LearningPath learningPath, double calificacionObtenida, boolean exitosa);
     // METODO 4 - REINTENTAR (SOLO PARA ESTUDIANTES), la idea es que cada subclase de actividad tenga su propio metodo reintentar, a partir de esto se podra reintentar la actividad, y se podra completar nuevamente, en caso de que se complete exitosamente, se podra evaluar nuevamente, para que haya un ciclo de reintentos hasta que se complete exitosamente para la misma actividad, antes de continuar con otra
     public abstract void reintentar(Estudiante estudiante);
+
+    
 
     // Metodos para modificacion de las actividades en si
     // Método para agregar una actividad previa sugerida en la clase Actividad

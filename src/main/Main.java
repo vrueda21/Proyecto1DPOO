@@ -15,15 +15,15 @@ import java.util.HashMap;
 import java.io.IOException;
 
 public class Main {
-
+ // El proposito de esta clase es simular el flujo de un estudiante en un Learning Path, completando actividades y evaluaciones para mostrar evidencia que la implementacion de las clases y metodos es correcta.
     public static void main(String[] args) {
         // Definir archivos de persistencia para profesores, estudiantes y learning paths
-        File archivoProfesores = new File("src/persistencia/profesores.txt");
-        File archivoEstudiantes = new File("src/persistencia/estudiantes.txt");
-        File archivoLearningPaths = new File("src/persistencia/learningPaths.txt");
+        File archivoProfesores = new File("src/persistencia/profesores.txt"); // Se crea un archivo de texto para guardar los profesores
+        File archivoEstudiantes = new File("src/persistencia/estudiantes.txt"); // Se crea un archivo de texto para guardar los estudiantes
+        File archivoLearningPaths = new File("src/persistencia/learningPaths.txt"); // Se crea un archivo de texto para guardar los LearningPaths
 
         try {
-            // === Crear datos iniciales y guardarlos en persistencia ===
+            // Crear datos iniciales y guardarlos en persistencia
             System.out.println("=== Creando y guardando datos iniciales ===");
 
             // Crear un profesor
@@ -118,9 +118,9 @@ public class Main {
             );
             learningPath.agregarActividad(quiz);
 
-            HashMap<Estudiante, Status> estadosRecurso = new HashMap<>();
-            estadosRecurso.put(estudiante1, Status.Incompleto);
-            estadosRecurso.put(estudiante2, Status.Incompleto);
+            HashMap<Estudiante, Status> estadosRecurso = new HashMap<>(); // Crear el mapa de estados inicial para los estudiantes
+            estadosRecurso.put(estudiante1, Status.Incompleto); // Establecer el estado inicial de la actividad para cada estudiante
+            estadosRecurso.put(estudiante2, Status.Incompleto); // Establecer el estado inicial de la actividad para cada estudiante
 
             RecursoEducativo recurso = new RecursoEducativo(
                 "Video de Introducción a Java", 
@@ -138,10 +138,10 @@ public class Main {
             );
             learningPath.agregarActividad(recurso);
 
-            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath);
+            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath); // Guardar los datos iniciales en persistencia
 
-            // === Simulación de respuestas por ambos estudiantes ===
-            System.out.println("\n== Simulación de Respuestas de Estudiantes ==");
+            // Simulación de respuestas por ambos estudiantes 
+            System.out.println("\n== Simulación de Respuestas de Estudiantes =="); 
 
             // Estudiante 1 completa todas las actividades exitosamente
             tarea.responder(estudiante1, "LMS");
@@ -171,7 +171,7 @@ public class Main {
             System.out.println("Progreso del Estudiante 1: " + progreso1 + "%");
             System.out.println("Progreso del Estudiante 2: " + progreso2 + "%");
 
-            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath);
+            guardarDatos(archivoProfesores, archivoEstudiantes, archivoLearningPaths, profesor, estudiante1, estudiante2, learningPath); // Guardar los datos actualizados en persistencia
 
         } catch (Exception e) {
             System.out.println("Error durante la ejecución: " + e.getMessage());
@@ -181,9 +181,9 @@ public class Main {
 
     // Método para sobrescribir datos de persistencia
     private static void guardarDatos(File archivoProfesores, File archivoEstudiantes, File archivoLearningPaths, Profesor profesor, Estudiante estudiante1, Estudiante estudiante2, LearningPath learningPath) throws IOException {
-        PersistenciaProfesor.guardarProfesor(profesor, archivoProfesores);
-        PersistenciaEstudiante.guardarEstudiante(estudiante1, archivoEstudiantes);
-        PersistenciaEstudiante.guardarEstudiante(estudiante2, archivoEstudiantes);
-        PersistenciaLearningPath.guardarLearningPath(learningPath);
+        PersistenciaProfesor.guardarProfesor(profesor, archivoProfesores); // Guardar el profesor en el archivo
+        PersistenciaEstudiante.guardarEstudiante(estudiante1, archivoEstudiantes); // Guardar el estudiante 1 en el archivo
+        PersistenciaEstudiante.guardarEstudiante(estudiante2, archivoEstudiantes); // Guardar el estudiante 2 en el archivo
+        PersistenciaLearningPath.guardarLearningPath(learningPath); // Guardar el LearningPath en el archivo
     }
 }

@@ -1,0 +1,28 @@
+Learning Path de Prueba,Intermedio,Un camino de aprendizaje completo,Mejorar habilidades de programación,120,2024-11-03T02:06:48.088197000,2024-11-03T02:06:48.090482000,4,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:Incompleto;maria@example.com:Incompleto,SI,,,LMS,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-08T02:06:48.090436000,2024-11-03T02:06:48.090447000,carlos@example.com:Incompleto;maria@example.com:Incompleto,NO,,,¿Cuál es el resultado de 2+2?,60.0,0.0,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Incompleto;maria@example.com:Incompleto,NO,,,video,Juan
+COMPLETADAS_CON_DUP:
+COMPLETADAS_SIN_DUP:
+Learning Path de Prueba,Intermedio,Un camino de aprendizaje completo,Mejorar habilidades de programación,120,2024-11-03T02:06:48.088197000,2024-11-03T02:06:48.090482000,4,Incompleto,4.5,Juan,0.0
+ACTIVIDADES:
+Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:noExitosa;maria@example.com:Completado,SI,,,Correo,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-08T02:06:48.090436000,2024-11-03T02:06:48.090447000,carlos@example.com:noExitosa;maria@example.com:Completado,NO,,,¿Cuál es el resultado de 2+2?,60.0,0.0,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Completado;maria@example.com:Completado,NO,,,video,Juan
+COMPLETADAS_CON_DUP:
+carlos@example.com:Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:noExitosa;maria@example.com:Completado,SI,,,Correo,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Completado;maria@example.com:Completado,NO,,,video,Juan
+
+maria@example.com:Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:noExitosa;maria@example.com:Completado,SI,,,Correo,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-08T02:06:48.090436000,2024-11-03T02:06:48.090447000,carlos@example.com:noExitosa;maria@example.com:Completado,NO,,,¿Cuál es el resultado de 2+2?,60.0,0.0,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Completado;maria@example.com:Completado,NO,,,video,Juan
+
+COMPLETADAS_SIN_DUP:
+carlos@example.com:Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:noExitosa;maria@example.com:Completado,SI,,,Correo,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Completado;maria@example.com:Completado,NO,,,video,Juan
+
+maria@example.com:Tarea,Tarea de Ejemplo,Intermedio,Resolver problemas de lógica,60,1.0,2024-11-10T02:06:48.089195000,2024-11-03T02:06:48.089443000,carlos@example.com:noExitosa;maria@example.com:Completado,SI,,,Correo,Juan
+Quiz,Quiz de Matemáticas Básicas,Principiante,Verificar habilidades básicas de matemáticas,30,1.0,2024-11-08T02:06:48.090436000,2024-11-03T02:06:48.090447000,carlos@example.com:noExitosa;maria@example.com:Completado,NO,,,¿Cuál es el resultado de 2+2?,60.0,0.0,Juan
+Recurso,Video de Introducción a Java,Intermedio,Introducción a la programación en Java,20,1.0,2024-11-13T02:06:48.090473000,2024-11-03T02:06:48.090478000,carlos@example.com:Completado;maria@example.com:Completado,NO,,,video,Juan
+

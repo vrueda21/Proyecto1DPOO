@@ -23,29 +23,29 @@ public class PersistenciaLearningPath // Esta clase se encarga de la persistenci
 
     // Método para cargar todos los LearningPaths del archivo
     public static List<LearningPath> cargarLearningPaths(Profesor creador) throws IOException {
-        File archivo = new File(RUTA_ARCHIVO);
-        List<LearningPath> learningPaths = new ArrayList<>();
+        File archivo = new File(RUTA_ARCHIVO); // Se crea un archivo con la ruta especificada
+        List<LearningPath> learningPaths = new ArrayList<>(); // Lista de LearningPaths a retornar
 
-        if (!archivo.exists()) {
-            System.out.println("El archivo de learning paths no existe.");
-            return learningPaths;
+        if (!archivo.exists()) { // Si el archivo no existe
+            System.out.println("El archivo de learning paths no existe."); // Se imprime un mensaje
+            return learningPaths; // Se retorna la lista vacía
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
-            LearningPath learningPath = LearningPath.cargarDeArchivo(archivo, creador);
-            if (learningPath != null) {
-                learningPaths.add(learningPath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) { // Se crea un BufferedReader para leer el archivo
+            LearningPath learningPath = LearningPath.cargarDeArchivo(archivo, creador); // Se carga el primer LearningPath del archivo
+            if (learningPath != null) { // Si el LearningPath no es nulo
+                learningPaths.add(learningPath); // Se agrega el LearningPath a la lista
             }
         }
 
-        return learningPaths;
+        return learningPaths; // Se retorna la lista de LearningPaths
     }
 
     // Método para borrar el archivo (por ejemplo, para reiniciar la persistencia)
     public static void borrarArchivo() throws IOException {
-        File archivo = new File(RUTA_ARCHIVO);
-        if (archivo.exists()) {
-            archivo.delete();
+        File archivo = new File(RUTA_ARCHIVO); // Se crea un archivo con la ruta especificada
+        if (archivo.exists()) { // Si el archivo existe
+            archivo.delete(); // Se elimina el archivo
         }
     }
 
