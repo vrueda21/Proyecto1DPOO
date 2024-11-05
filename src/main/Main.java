@@ -18,9 +18,9 @@ public class Main {
  // El proposito de esta clase es simular el flujo de un estudiante en un Learning Path, completando actividades y evaluaciones para mostrar evidencia que la implementacion de las clases y metodos es correcta.
     public static void main(String[] args) {
         // Definir archivos de persistencia para profesores, estudiantes y learning paths
-        File archivoProfesores = new File("src/persistencia/profesores.txt"); // Se crea un archivo de texto para guardar los profesores
-        File archivoEstudiantes = new File("src/persistencia/estudiantes.txt"); // Se crea un archivo de texto para guardar los estudiantes
-        File archivoLearningPaths = new File("src/persistencia/learningPaths.txt"); // Se crea un archivo de texto para guardar los LearningPaths
+        File archivoProfesores = new File("src/persistencia/archivo/profesores.txt"); // Se crea un archivo de texto para guardar los profesores
+        File archivoEstudiantes = new File("src/persistencia/archivo/estudiantes.txt"); // Se crea un archivo de texto para guardar los estudiantes
+        File archivoLearningPaths = new File("src/persistencia/archivo/learningPaths.txt"); // Se crea un archivo de texto para guardar los LearningPaths
 
         try {
             // Crear datos iniciales y guardarlos en persistencia

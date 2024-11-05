@@ -10,7 +10,7 @@ public class PersistenciaLearningPath // Esta clase se encarga de la persistenci
 
 {
     
-    private static final String RUTA_ARCHIVO = "src/persistencia/learningPaths.txt"; // Path del archivo de texto donde se guardan los LearningPaths con sus actividades y preguntas
+    private static final String RUTA_ARCHIVO = "src/persistencia/archivo/learningPaths.txt"; // Path del archivo de texto donde se guardan los LearningPaths con sus actividades y preguntas
     
     // Método para guardar un LearningPath en el archivo
     public static void guardarLearningPath(LearningPath learningPath) throws IOException {
