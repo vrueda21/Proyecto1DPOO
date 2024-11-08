@@ -1,0 +1,2 @@
+
+Este archivo se esta agregando para que Git deje hacer un commit con la carpeta donde iran los archivos de peristencia
