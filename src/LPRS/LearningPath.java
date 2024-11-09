@@ -319,7 +319,7 @@ public class LearningPath {
 
     // Método para guardar el LearningPath en un archivo de texto plano
     public void guardarEnArchivo(File archivo) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, true))) { // BufferedWriter se utiliza para escribir texto en un archivo, FileWriter se utiliza para escribir caracteres en un archivo, y append = true para agregar texto al final del archivo
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo, false))) { // BufferedWriter se utiliza para escribir texto en un archivo, FileWriter se utiliza para escribir caracteres en un archivo, y append = true para agregar texto al final del archivo
             // Guardar atributos básicos del LearningPath
             // Aqui el write esta guardando los atributos del LearningPath en el archivo de texto, se utiliza el metodo write para escribir texto en el archivo, y el metodo newLine para escribir una nueva linea en el archivo
             writer.write(this.titulo + "," + 
@@ -335,7 +335,15 @@ public class LearningPath {
                          this.creador.getNombre() + "," +
                          this.progreso);
             writer.newLine();
-    
+
+            // Guardar la lista de estudiantes inscritos
+            writer.write("ESTUDIANTES_INSCRITOS:");
+            writer.newLine();
+            for (Estudiante estudiante : estudiantesInscritos) {
+                writer.write(estudiante.getCorreo());
+                writer.newLine();
+            }
+
             writer.write("ACTIVIDADES:"); // Etiqueta para indicar que se guardará la lista de actividades
             writer.newLine();
     
@@ -404,8 +412,18 @@ public class LearningPath {
                 System.out.println("Learning Path cargado correctamente. Título: " + titulo); // Mensaje de éxito
     
                 // Leer y cargar las listas adicionales
+
                 while ((linea = reader.readLine()) != null) { // Leer las siguientes líneas del archivo
-                    if (linea.equals("ACTIVIDADES:")) { // Verificar si se llegó a la lista de actividades
+                    if (linea.equals("ESTUDIANTES_INSCRITOS:")) {
+                        System.out.println("Cargando ESTUDIANTES_INSCRITOS...");
+                        while ((linea = reader.readLine()) != null && !linea.equals("ACTIVIDADES:")) {
+                            Estudiante estudiante = buscarEstudiantePorCorreo(learningPath.getEstudiantesInscritos(), linea);
+                            if (estudiante != null) {
+                                learningPath.inscripcionEstudiante(estudiante);
+                            }
+                        }
+                    }
+                    else if (linea.equals("ACTIVIDADES:")) { // Verificar si se llegó a la lista de actividades
                         System.out.println("Cargando ACTIVIDADES..."); // Mensaje de éxito
                         while ((linea = reader.readLine()) != null && !linea.equals("COMPLETADAS_CON_DUP:")) { // Leer las actividades hasta llegar a la siguiente sección
                             Actividad actividad = PersistenciaActividad.cargarActividad(linea, creador, formatter); // Cargar la actividad
